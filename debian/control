@@ -1,0 +1,16 @@
+Source: libgtk2-ex-dragger-perl
+Section: perl
+Priority: optional
+Build-Depends: cdbs, debhelper (>= 4)
+Maintainer: Kevin Ryde <user42@zip.com.au>
+Standards-Version: 3.7.3
+Homepage: http://www.geocities.com/user42_kevin/gtk2-ex-dragger/index.html
+Bugs: mailto:user42@zip.com.au
+
+Package: libgtk2-ex-dragger-perl
+Architecture: all
+Depends: libgtk2-perl, libglib-objectbits-perl
+Description: Mouse dragging to move widget contents
+ Gtk2::Ex::Dragger implements mouse pointer dragging to move the
+ contents of scrollable widgets.  It works on any widget controlled
+ through Gtk2::Adjustment(s).

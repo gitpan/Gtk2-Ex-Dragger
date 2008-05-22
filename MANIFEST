@@ -1,0 +1,21 @@
+COPYING
+debian/changelog
+debian/compat
+debian/control
+debian/copyright
+debian/rules
+debian/watch
+examples/busy.pl
+examples/heart.pl
+examples/label.pl
+examples/textview.pl
+examples/vruler.pl
+lib/Gtk2/Ex/Dragger.pm
+lib/Gtk2/Ex/SyncCall.pm
+Makefile.PL
+MANIFEST			This list of files
+README
+SIGNATURE
+t/Dragger.t
+t/pod.t
+META.yml                                 Module meta-data (added by MakeMaker)

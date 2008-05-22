@@ -1,0 +1,43 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.55.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 8624bcdae55baeef00cd11d5dfcfa60f68710a02 COPYING
+SHA1 cc01235da071996636f7b3bfe62903e3f2a7f8fe MANIFEST
+SHA1 7ccf663fbad4287470268ea568a1512a1fb03536 META.yml
+SHA1 ea3113d023db703958837f6a7e10cb61853f3917 Makefile.PL
+SHA1 263ad810d0cf3a91298168690cd645cdc217d673 README
+SHA1 66cd68ad91f9d977d5afa7d8def6dee67017149d debian/changelog
+SHA1 1b6453892473a467d07372d45eb05abc2031647a debian/compat
+SHA1 143b1aa33b98894fd5a8462a2327cbface2f0790 debian/control
+SHA1 699bc3d27da63da62bddaf54ecac235ac5d800fc debian/copyright
+SHA1 a900deb0f6cdbdd62a2899a36accd06fd63d2e58 debian/rules
+SHA1 b96d06bbacf126a7cf500a02d1a8f52d7b6a83bb debian/watch
+SHA1 1404a7e0e78c8a4eb9effc201f916cbf2c7d07d1 examples/busy.pl
+SHA1 8422b0f3dd653bb0e2b8e6115bc68140c8df7f2a examples/heart.pl
+SHA1 08eee99cd9112c60c48691f0670a760a1a649682 examples/label.pl
+SHA1 68898139e92b59f328285a3d21a96ff3f5896197 examples/textview.pl
+SHA1 679d6b5c2ac7e242427682a7d3ad251c9db4f083 examples/vruler.pl
+SHA1 6ef7bcbac04ee559102c839f15e558a787f1fa4a lib/Gtk2/Ex/Dragger.pm
+SHA1 f2a106e587659f384b3ecea5835ec4cc775b92eb lib/Gtk2/Ex/SyncCall.pm
+SHA1 c86b88164ce85f1c59d46e18349c020a5909d4ad t/Dragger.t
+SHA1 a661a39e55a4127aecb1b97a631c4f01f7dce8c6 t/pod.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFINMA2LFMCIV9q3ToRAqF4AJ4teRDTTPO6+Ey0M4UxHw+biS8jqwCfR/Ul
+xcY+qjzod46AjuLtUXVoLws=
+=CdfU
+-----END PGP SIGNATURE-----
