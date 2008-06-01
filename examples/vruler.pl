@@ -47,8 +47,8 @@ $toplevel->signal_connect (destroy => sub { Gtk2->main_quit });
 my $ruler = Gtk2::VRuler->new;
 $toplevel->add ($ruler);
 
-# seppos, eh ... not only do they refuse to use metric but they misspell the
-# names of the units ...
+# septics, eh ... not only do they refuse to use metric but they misspell
+# the names of the units ...
 $ruler->set_metric ('centimeters');
 
 use constant PAGE_SIZE => 200.0;

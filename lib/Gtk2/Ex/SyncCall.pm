@@ -22,7 +22,7 @@ use Carp;
 use Gtk2;
 use Glib::Ex::SignalIds;
 
-our $VERSION = 1;
+our $VERSION = 2;
 
 # set this to 1 for some diagnostic prints
 use constant DEBUG => 0;

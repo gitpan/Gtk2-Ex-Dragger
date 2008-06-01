@@ -99,10 +99,10 @@ $viewport->signal_connect
 
 sub busy {
   Gtk2::Ex::WidgetCursor->busy;
-  Time::HiRes::usleep (200_000);   # 200 milliseconds
+  Time::HiRes::usleep (400_000);   # 400 milliseconds
   return 1; # continue timer
 }
-Glib::Timeout->add (800, \&busy);  # 800 milliseconds
+Glib::Timeout->add (1200, \&busy);  # 800 milliseconds
 
 $toplevel->show_all;
 Gtk2->main;

@@ -16,20 +16,5 @@ You should have received a copy of the GNU General Public License along
 with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-Gtk2::Ex::Dragger adds dragging to any widget scrolled through
-Gtk2::Adjustment objects.  Basically mouse movement is scaled and
-applied to shift the "value" in the adjustments (either horizontally,
-vertically, or both).
-
-You can use dragging instead of scrollbars, or as well as them
-(probably with Gtk2::ScrolledWindow).  A widget that's not normally
-scrollable can be put inside a Gtk2::Viewport to make it so in the
-usual way.
-
-The prerequisites are Gtk2-Perl, and my Glib-Ex-ObjectBits helpers.
-The Dragger home page is
-
-    http://www.geocities.com/user42_kevin/gtk2-ex-dragger/index.html
-
-Bug reports to the author at user42@zip.com.au please.
+Version 1 - the first version
+Version 2 - allow external adj changes during a drag, eg. from the keyboard

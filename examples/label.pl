@@ -33,7 +33,7 @@
 # around.  If you want to see how bad the Label gets then try the
 # commented-out "update_policy => 'continuous'" in the
 # Gtk2::Ex::Dragger->new() call below.  Unless you've got a fast computer
-# (and video card) you'll be disappointed by how much the label drawing lags
+# and video card you'll be disappointed by how much the label drawing lags
 # the mouse movement.
 #
 

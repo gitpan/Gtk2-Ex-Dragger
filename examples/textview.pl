@@ -21,12 +21,16 @@
 # This example adds draggability to a Gtk2::TextView widget with
 # Control-Button1.  Plain Button1 is left as the text selection.
 #
-# The "confine" option is set on the dragger, as an example of how it
-# restricts mouse pointer movement to the actual scrollable range.  This is
-# partly a matter of personal preference, but it's normally a pretty good
-# way to show you you've hit the scrollable limit.
+# You can use the keyboard to move the insertion point around during a drag,
+# which has the effect of moving the scrolled position, generally first by a
+# jump to put the insertion point on screen.
 #
-# The $heading_eventbox copes with a perversity of Gtk 2.12.9.  A no-window
+# The "confine" option on the dragger restricts mouse pointer movement to
+# the actual scrollable range.  This is mostly a matter of personal
+# preference, but it's a pretty good way to know you've hit the scrollable
+# limit.
+#
+# $heading_eventbox copes with a perversity of Gtk 2.12.9.  A no-window
 # widget like Gtk2::Label in the heading area doesn't get expose events
 # propagated to it from the heading window during scrolls.  That's something
 # containers are normally meant to do, and if GtkTextView used some of the
@@ -55,7 +59,7 @@ $scrolled->add ($textview);
 my $heading_eventbox = Gtk2::EventBox->new;
 my $heading = Gtk2::Label->new ("\nDrag with Control-Button1\n");
 $heading_eventbox->add ($heading);
-my $req = $heading_eventbox->size_request;
+my $req = $heading->size_request;
 $textview->set_border_window_size ('top', $req->height);
 $textview->add_child_in_window ($heading_eventbox, 'top', 20,0);
 
