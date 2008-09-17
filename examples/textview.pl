@@ -26,17 +26,17 @@
 # jump to put the insertion point on screen.
 #
 # The "confine" option on the dragger restricts mouse pointer movement to
-# the actual scrollable range.  This is mostly a matter of personal
-# preference, but it's a pretty good way to know you've hit the scrollable
-# limit.
+# the actual scrollable range.  Whether you want that is mostly a matter of
+# personal preference, but it's a pretty good way to know you've hit the
+# scrollable limit.
 #
-# $heading_eventbox copes with a perversity of Gtk 2.12.9.  A no-window
-# widget like Gtk2::Label in the heading area doesn't get expose events
-# propagated to it from the heading window during scrolls.  That's something
-# containers are normally meant to do, and if GtkTextView used some of the
-# ordinary GtkContainer it'd get it for free.  But at any rate using a
-# Gtk2::EventBox forces a subwindow and gets exposes (in that subwindow) to
-# the label.
+# $heading_eventbox copes with a perversity of Gtk (version 2.12 at least).
+# A no-window widget like Gtk2::Label in the heading area doesn't get expose
+# events propagated to it from the heading window during scrolls.  That's
+# something containers are normally meant to do, and if GtkTextView used
+# some of the ordinary GtkContainer it'd get it for free.  But at any rate
+# using a Gtk2::EventBox forces a subwindow and gives exposes (in that
+# subwindow) to the label.
 #
 
 use strict;
@@ -68,7 +68,7 @@ $textview->set_buffer ($textbuf);
 
 { # textbuf contents from this file itself
   open (my $fh, '<', __FILE__) or die $!;
-  local $/; # slurp
+  local $/ = undef; # slurp
   my $str = <$fh>;
   close $fh or die;
   $textbuf->set_text ($str);

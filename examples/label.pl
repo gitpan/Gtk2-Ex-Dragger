@@ -23,8 +23,8 @@
 # notion of a scrolled position.
 #
 # Notice the dragger is set on the viewport, not the contained label.  It's
-# the viewport which is the visible window corresponding to the adjustments,
-# and responding to them.
+# the viewport which is the visible part corresponding to the adjustment
+# page, and responding to the adjustment "value" position.
 #
 # If you think the scrolling in this example isn't as smooth as in
 # textview.pl, well, you're right.  GtkTextView is much more efficient at
@@ -33,8 +33,8 @@
 # around.  If you want to see how bad the Label gets then try the
 # commented-out "update_policy => 'continuous'" in the
 # Gtk2::Ex::Dragger->new() call below.  Unless you've got a fast computer
-# and video card you'll be disappointed by how much the label drawing lags
-# the mouse movement.
+# and fast video card you'll be disappointed by how much the label drawing
+# lags the mouse movement.
 #
 
 use strict;

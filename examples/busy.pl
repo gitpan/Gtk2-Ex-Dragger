@@ -18,12 +18,19 @@
 # with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# This example shows the interaction between the WidgetCursor "busy" and a
-# drag.
+# This example shows the interaction between the WidgetCursor "busy"
+# mechanism and a Dragger.
 #
-# Basically the busy cursor gets shown, but otherwise the state isn't lost
-# and the cursor put back when unbusy - which is pretty much what you want
-# if a scroll provokes some time consuming activity.
+# Basically the busy cursor is shown, but the Dragger state isn't lost and
+# the cursor is restored when unbusy - which is pretty much what you want if
+# a scroll provokes some time consuming activity.
+#
+# As noted in the text below, if you keep wiggling the mouse around the busy
+# cursor will continue to show.  That's because it's only removed when idle,
+# and the main loop activity you create by wiggling means it's not idle yet.
+# This is logical, and you do normally want the busy cursor to stay while
+# doing drawing for such wiggling, even if in this case the program is
+# interacting and therefore from the user's point of view not really busy.
 #
 
 use strict;
@@ -81,9 +88,9 @@ $viewport->add ($label);
 $viewport->set_size_request (-1, 100);
 
 my $dragger = Gtk2::Ex::Dragger->new
-  (widget => $viewport,
+  (widget      => $viewport,
    vadjustment => $viewport->get_vadjustment,
-   confine => 1);
+   confine     => 1);
 
 $viewport->signal_connect
   (button_press_event => sub {

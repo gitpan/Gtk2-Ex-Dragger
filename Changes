@@ -16,5 +16,11 @@ You should have received a copy of the GNU General Public License along
 with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Version 1 - the first version
-Version 2 - allow external adj changes during a drag, eg. from the keyboard
+Version 3,  September 2008
+    - SyncCall split out to WidgetBits
+
+Version 2,  June 2008
+    - allow external adj changes during a drag, eg. from the keyboard
+
+Version 1,  May 2008
+    - the first version

@@ -15,31 +15,30 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 8624bcdae55baeef00cd11d5dfcfa60f68710a02 COPYING
-SHA1 6f89f6665ae66683b32ebee8fad9183563474804 Changes
-SHA1 7c669dd912d40521ec1f7f16653fe0abd9413cda MANIFEST
-SHA1 5b83cce03d87c1f7d13322d77688414e4b325b31 META.yml
-SHA1 ea3113d023db703958837f6a7e10cb61853f3917 Makefile.PL
+SHA1 bd951061137dbda3f96290887d16792244de4625 Changes
+SHA1 edd068aa080918f190a0a6940f7f14de0ed5ab00 MANIFEST
+SHA1 90854855cf13b9d4d4dbb6d6bffdfd94c8718619 META.yml
+SHA1 963118ef2a7de42e5648457594750a62f92d6d32 Makefile.PL
 SHA1 89d7d468bd8605e5cefcb00aba62c531c01f0c2c README
-SHA1 d33bc1992d047f976b6be232b1df58cb672fbcbf debian/changelog
+SHA1 87153987cb8d1be2a0d87d3574ea418bb20c4128 debian/changelog
 SHA1 1b6453892473a467d07372d45eb05abc2031647a debian/compat
-SHA1 e091aec5b0817b2bb85cd95a78da290206fe4e93 debian/control
+SHA1 fd3b63773a1b6093ad7dcf3e1870240fa0dcdd7c debian/control
 SHA1 699bc3d27da63da62bddaf54ecac235ac5d800fc debian/copyright
 SHA1 a900deb0f6cdbdd62a2899a36accd06fd63d2e58 debian/rules
 SHA1 b96d06bbacf126a7cf500a02d1a8f52d7b6a83bb debian/watch
-SHA1 42ee5aef83a4876e6bead642ff23109035feaf9b devel/run.pl
-SHA1 8fa66569e1473b67e322ddad57ff44064d539f95 examples/busy.pl
-SHA1 8422b0f3dd653bb0e2b8e6115bc68140c8df7f2a examples/heart.pl
-SHA1 e27d237907743225c67f59d8c3e7f89443151d76 examples/label.pl
-SHA1 9fe33abdcb4f85aa03b622ebc7a38318aade8433 examples/textview.pl
+SHA1 09e83d8142da6a36d6fafaa66ad634172cc21438 devel/run.pl
+SHA1 272cc93abb715442ff10cffb287b3276fde6c7fc examples/busy.pl
+SHA1 d5925cdeae23f61edf1d24fa1c6af5c4e28e22fd examples/heart.pl
+SHA1 b1a76a2a4cf186712af2164cebf5e4ff3fc55d6b examples/label.pl
+SHA1 a897a2f844ab0cf71bb6cf2056e2da60176eb390 examples/textview.pl
 SHA1 ca55dbccfe423800d7391c5654c0397ff6c9c903 examples/vruler.pl
-SHA1 4577ef716ae328d25161a60457ca8b987d0339cc lib/Gtk2/Ex/Dragger.pm
-SHA1 a1f50729d5672049a953128c50eb7d76fc240452 lib/Gtk2/Ex/SyncCall.pm
-SHA1 c86b88164ce85f1c59d46e18349c020a5909d4ad t/Dragger.t
+SHA1 7c45d15421519b1826996a3e103093f91b47ca2d lib/Gtk2/Ex/Dragger.pm
+SHA1 d9d70e3907032a7a1f2f9ec8426096a8d8364300 t/Dragger.t
 SHA1 a661a39e55a4127aecb1b97a631c4f01f7dce8c6 t/pod.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-iD8DBQFIQeuyLFMCIV9q3ToRAlMgAJ41XO8UBXKwcGmBqJlVkR/C/9TJOwCcDEYZ
-W3LQnuUn6bj0xw46MrWF8OE=
-=nw+G
+iD8DBQFI0FU6LFMCIV9q3ToRAv+3AJ9ZeLRbbGz3pOp8vIYyGHTnuQU5bwCdH1Hg
+pBxCpyj+B2mL81B4bsx9r8g=
+=6Hmm
 -----END PGP SIGNATURE-----

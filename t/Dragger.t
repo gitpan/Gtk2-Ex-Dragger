@@ -1,4 +1,4 @@
-# Gtk2::Ex::Dragger tests.
+#!/usr/bin/perl
 
 # Copyright 2007, 2008 Kevin Ryde
 
@@ -20,11 +20,11 @@
 
 use strict;
 use warnings;
-use Test::More tests => 4;
 use Gtk2::Ex::Dragger;
+use Test::More tests => 4;
 
-ok ($Gtk2::Ex::Dragger::VERSION >= 1);
-ok (Gtk2::Ex::Dragger->VERSION >= 1);
+ok ($Gtk2::Ex::Dragger::VERSION >= 3);
+ok (Gtk2::Ex::Dragger->VERSION  >= 3);
 
 SKIP: {
   require Gtk2;

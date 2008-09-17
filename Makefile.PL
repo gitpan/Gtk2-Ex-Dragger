@@ -22,7 +22,7 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile
-  (NAME         => 'Gtk2::Ex::Dragger',
+  (NAME         => 'Gtk2-Ex-Dragger',
    ABSTRACT     => 'Mouse drag to move widget contents.',
    VERSION_FROM => 'lib/Gtk2/Ex/Dragger.pm',
    AUTHOR       => 'Kevin Ryde <user42@zip.com.au>',
@@ -36,21 +36,35 @@ WriteMakefile
                     # from my Glib-Ex-ObjectBits
                     'Glib::Ex::SignalIds' => 0,
 
+                    # version 3 split out to WidgetBits
+                    'Gtk2::Ex::SyncCall' => 3,
+
                     # actually Gtk2 requires perl 5.8, which has List::Util
                     # and Scalar::Util builtin already
                     'List::Util' => 0,
                     'Scalar::Util' => 0,
                    },
 
-   clean        => { FILES => "Dragger.html SyncCall.html" },
+   clean        => { FILES => "Dragger.html" },
+
+   EXTRA_META => <<'HERE',
+no_index:
+    directory:
+        - devel
+resources:
+    homepage: http://www.geocities.com/user42_kevin/gtk2-ex-dragger/index.html
+HERE
   );
 
 sub MY::postamble {
   return <<'MAKE_FRAG';
 
+LINT_FILES = $(TO_INST_PM) t/*.t examples/*.pl devel/*.pl
 lint:
-	perl -MO=Lint lib/Gtk2/Ex/Dragger.pm lib/Gtk2/Ex/SyncCall.pm
-	podchecker    lib/Gtk2/Ex/Dragger.pm lib/Gtk2/Ex/SyncCall.pm
+	for i in $(LINT_FILES); do perl -MO=Lint $$i; done
+	podchecker $(LINT_FILES)
+pc:
+	perlcritic $(LINT_FILES)
 
 myman:
 	mv MANIFEST MANIFEST.old
@@ -64,17 +78,10 @@ Dragger.html: lib/Gtk2/Ex/Dragger.pm Makefile
 	| sed 's!http://search.cpan.org/perldoc?Gtk2%3A%3A\([^"%]*\)"!http://gtk2-perl.sourceforge.net/doc/pod/Gtk2/\1.html"!' \
 	| sed 's!http://search.cpan.org/perldoc?Gtk2%3A%3AGdk%3A%3A\([^"%]*\)"!http://gtk2-perl.sourceforge.net/doc/pod/Gtk2/Gdk/\1.html"!' \
 	  >Dragger.html
-SyncCall.html: lib/Gtk2/Ex/SyncCall.pm Makefile
-	-perl -MPod::Simple::HTML -e Pod::Simple::HTML::go \
-	  lib/Gtk2/Ex/SyncCall.pm \
-	| sed 's!http://search.cpan.org/perldoc?Glib%3A%3A\([^"]*\)!http://gtk2-perl.sourceforge.net/doc/pod/Glib/\1.html!' \
-	| sed 's!http://search.cpan.org/perldoc?Gtk2%3A%3A\([^"%]*\)"!http://gtk2-perl.sourceforge.net/doc/pod/Gtk2/\1.html"!' \
-	| sed 's!http://search.cpan.org/perldoc?Gtk2%3A%3AGdk%3A%3A\([^"%]*\)"!http://gtk2-perl.sourceforge.net/doc/pod/Gtk2/Gdk/\1.html"!' \
-	  >SyncCall.html
 
 # find files in the dist with mod times this year, but without this year in
 # the copyright line
-copyright-years-check: Gtk2-Ex-Dragger-$(VERSION).tar.gz
+copyright-years-check:
 	year=`date +%Y`; \
 	tar tvfz Gtk2-Ex-Dragger-$(VERSION).tar.gz \
 	| grep $$year- \
@@ -100,6 +107,17 @@ copyright-years-check: Gtk2-Ex-Dragger-$(VERSION).tar.gz
 
 debug-constants-check:
 	if egrep -n 'DEBUG => [^0]' $(TO_INST_PM); then exit 1; else exit 0; fi
+
+diff-prev:
+	rm -rf diff.tmp
+	mkdir diff.tmp
+	cd diff.tmp \
+	&& tar xfz ../$(NAME)-`expr $(VERSION) - 1`.tar.gz \
+	&& tar xfz ../$(NAME)-$(VERSION).tar.gz
+	-cd diff.tmp; diff -ur $(NAME)-`expr $(VERSION) - 1` \
+	                       $(NAME)-$(VERSION) >tree.diff
+	-less diff.tmp/tree.diff
+	rm -rf diff.tmp
 
 MAKE_FRAG
 }

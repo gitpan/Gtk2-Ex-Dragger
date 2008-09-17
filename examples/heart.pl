@@ -22,10 +22,10 @@
 #
 # As a bit of fun a heart cursor is turned on and off with a timer.  It's
 # got a positive priority so overrides the cursor in the dragger call.  You
-# can in general choose whether you want the dragger or the base cursor to
-# have precedence.  Notice the grab inheritance means the cursor continues
-# to apply as the mouse drag moves outside the normal window (a normal X
-# feature).
+# can in general choose whether you want the dragger or a base cursor to
+# have precedence.  Notice the normal X implicit-grab/inheritance stuff
+# means the cursor continues to apply as the mouse drag moves outside the
+# originating window.
 #
 
 use strict;

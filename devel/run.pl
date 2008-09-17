@@ -1,3 +1,5 @@
+#!/usr/bin/perl
+
 # Copyright 2008 Kevin Ryde
 
 # This file is part of Gtk2-Ex-Dragger.
@@ -22,6 +24,9 @@ use List::Util qw(min max);
 use Gtk2 '-init';
 use Gtk2::Ex::Dragger;
 use Data::Dumper;
+
+use File::Basename;
+my $progname = basename($0);
 
 # Gtk2::Gdk::Window->set_debug_updates (1);
 
@@ -95,7 +100,7 @@ sub make {
                                      update_policy => $update_policy,
                                      confine       => $confine,
                                      cursor        => 'fleur');
-  print __FILE__,($confine?"confined ":"unconfined "),
+  print "$progname ",($confine?"confined ":"unconfined "),
     ($hinverted?"hinv ":"hnorm "),
       ($vinverted?"vinv":"vnorm"),
         "policy $update_policy\n";
@@ -151,11 +156,11 @@ make();
          - 'pointer-motion-hint-mask'
            + $motion_mask;
        $area->set(events => $new_mask);
-       print __FILE__,": area widget events ",$area->get('events'),"\n";
+       print "$progname: area widget events ",$area->get('events'),"\n";
        $area->show;
        $area->map;
        my ($width, $height) = $area->window->get_size;
-       print __FILE__,": area ${width}x${height} window events ",$area->window->get_events,"\n";
+       print "$progname: area ${width}x${height} window events ",$area->window->get_events,"\n";
 
        $update_policy = 'continuous';
        make();
@@ -205,10 +210,11 @@ $area->add_events ('button-press-mask');
 $area->signal_connect (button_press_event =>
                        sub {
                          my ($widget, $event) = @_;
-                         print __FILE__.": start button $widget\n";
+                         print "$progname: start button $widget\n";
                          $dragger->start ($event);
                          return 0; # propagate
                        });
 
 $toplevel->show_all;
 Gtk2->main;
+exit 0;

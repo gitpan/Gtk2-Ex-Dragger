@@ -1,3 +1,20 @@
+# Copyright 2007, 2008 Kevin Ryde
+
+# This file is part of Gtk2-Ex-Dragger.
+#
+# Gtk2-Ex-Dragger is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 2, or (at your option) any
+# later version.
+#
+# Gtk2-Ex-Dragger is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
+
 Source: libgtk2-ex-dragger-perl
 Section: perl
 Priority: optional
@@ -9,7 +26,7 @@ Bugs: mailto:user42@zip.com.au
 
 Package: libgtk2-ex-dragger-perl
 Architecture: all
-Depends: libgtk2-perl, libglib-ex-objectbits-perl
+Depends: libgtk2-perl, libgtk2-ex-widgetbits-perl (>= 3), libglib-ex-objectbits-perl
 Description: Mouse dragging to move widget contents
  Gtk2::Ex::Dragger implements mouse pointer dragging to move the
  contents of scrollable widgets.  It works on any widget controlled
