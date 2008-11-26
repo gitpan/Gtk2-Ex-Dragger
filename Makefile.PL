@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
+use 5.008;
 use strict;
 use warnings;
 use ExtUtils::MakeMaker;
@@ -30,8 +31,9 @@ WriteMakefile
    SIGN         => 1,
 
    PREREQ_PM    => {
-                    # any version should be ok
-                    'Gtk2' => 0,
+                    # version 1.200 for GDK_CURRENT_TIME, GDK_PRIORITY_REDRAW
+                    # and various bug fixes
+                    'Gtk2' => '1.200',
 
                     # from my Glib-Ex-ObjectBits
                     'Glib::Ex::SignalIds' => 0,

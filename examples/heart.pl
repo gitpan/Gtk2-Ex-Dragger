@@ -34,6 +34,9 @@ use Gtk2 '-init';
 use Gtk2::Ex::Dragger;
 use Gtk2::Ex::WidgetCursor;
 
+use FindBin;
+my $progname = $FindBin::Script;
+
 my $toplevel = Gtk2::Window->new('toplevel');
 $toplevel->signal_connect (destroy => sub { Gtk2->main_quit });
 
@@ -56,7 +59,7 @@ $viewport->signal_connect
   (button_press_event => sub {
      my ($viewport, $event) = @_;
      if ($event->button == 1) {
-       print __FILE__.": start button $viewport\n";
+       print "$progname: start button drag in $viewport\n";
        $dragger->start ($event);
        return 1; # don't propagate
      } else {

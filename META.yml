@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Gtk2-Ex-Dragger
-version:             3
+version:             4
 abstract:            Mouse drag to move widget contents.
 license:             gpl
 author:              
@@ -9,7 +9,7 @@ generated_by:        ExtUtils::MakeMaker version 6.42
 distribution_type:   module
 requires:     
     Glib::Ex::SignalIds:           0
-    Gtk2:                          0
+    Gtk2:                          1.200
     Gtk2::Ex::SyncCall:            3
     List::Util:                    0
     Scalar::Util:                  0

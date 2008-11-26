@@ -41,8 +41,11 @@
 
 use strict;
 use warnings;
+use FindBin;
 use Gtk2 '-init';
 use Gtk2::Ex::Dragger;
+
+my $progname = $FindBin::Script;
 
 my $toplevel = Gtk2::Window->new('toplevel');
 $toplevel->signal_connect (destroy => sub { Gtk2->main_quit });
@@ -85,7 +88,7 @@ $textview->signal_connect
   (button_press_event => sub {
      my ($textview, $event) = @_;
      if ($event->button == 1 && $event->state == 'control-mask') {
-       print __FILE__.": start drag in textview\n";
+       print "$progname: start drag in textview\n";
        $dragger->start ($event);
        return 1; # don't propagate event
 

@@ -20,13 +20,13 @@
 
 use strict;
 use warnings;
+use FindBin;
 use List::Util qw(min max);
 use Gtk2 '-init';
 use Gtk2::Ex::Dragger;
 use Data::Dumper;
 
-use File::Basename;
-my $progname = basename($0);
+my $progname = $FindBin::Script;
 
 # Gtk2::Gdk::Window->set_debug_updates (1);
 

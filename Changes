@@ -16,6 +16,9 @@ You should have received a copy of the GNU General Public License along
 with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Version 4,  November 2008
+    - use Gtk2 1.200
+
 Version 3,  September 2008
     - SyncCall split out to WidgetBits
 

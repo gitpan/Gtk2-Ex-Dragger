@@ -15,30 +15,30 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 8624bcdae55baeef00cd11d5dfcfa60f68710a02 COPYING
-SHA1 bd951061137dbda3f96290887d16792244de4625 Changes
+SHA1 5028242d24617b3dbd5751b5cf1b1d7f28d900dd Changes
 SHA1 edd068aa080918f190a0a6940f7f14de0ed5ab00 MANIFEST
-SHA1 90854855cf13b9d4d4dbb6d6bffdfd94c8718619 META.yml
-SHA1 963118ef2a7de42e5648457594750a62f92d6d32 Makefile.PL
+SHA1 9c14b0632127d8186932c32836445adeff7f59b0 META.yml
+SHA1 9962255d5ac5ea4674fea66b196abe4d51ddbc71 Makefile.PL
 SHA1 89d7d468bd8605e5cefcb00aba62c531c01f0c2c README
-SHA1 87153987cb8d1be2a0d87d3574ea418bb20c4128 debian/changelog
+SHA1 8f10c20d9e1a36362d7c1dd70e88b30127ab42ae debian/changelog
 SHA1 1b6453892473a467d07372d45eb05abc2031647a debian/compat
-SHA1 fd3b63773a1b6093ad7dcf3e1870240fa0dcdd7c debian/control
+SHA1 906f4bcbabe8cb21e0d9a4ad9db50e9851e4704f debian/control
 SHA1 699bc3d27da63da62bddaf54ecac235ac5d800fc debian/copyright
 SHA1 a900deb0f6cdbdd62a2899a36accd06fd63d2e58 debian/rules
-SHA1 b96d06bbacf126a7cf500a02d1a8f52d7b6a83bb debian/watch
-SHA1 09e83d8142da6a36d6fafaa66ad634172cc21438 devel/run.pl
+SHA1 11e65e8cf9678621c100d031192c9fae228f1f8b debian/watch
+SHA1 233c85a84fc0266272a846d591c4e518a9ea8938 devel/run.pl
 SHA1 272cc93abb715442ff10cffb287b3276fde6c7fc examples/busy.pl
-SHA1 d5925cdeae23f61edf1d24fa1c6af5c4e28e22fd examples/heart.pl
+SHA1 c5416da93318e910b9c63c6002232c179f69d7e3 examples/heart.pl
 SHA1 b1a76a2a4cf186712af2164cebf5e4ff3fc55d6b examples/label.pl
-SHA1 a897a2f844ab0cf71bb6cf2056e2da60176eb390 examples/textview.pl
+SHA1 3a3e9174096ebc695e7f3c5f8c0d046a6ce9d4ae examples/textview.pl
 SHA1 ca55dbccfe423800d7391c5654c0397ff6c9c903 examples/vruler.pl
-SHA1 7c45d15421519b1826996a3e103093f91b47ca2d lib/Gtk2/Ex/Dragger.pm
-SHA1 d9d70e3907032a7a1f2f9ec8426096a8d8364300 t/Dragger.t
+SHA1 6b194018fc88f4c09fb832f091850aaed9a4209d lib/Gtk2/Ex/Dragger.pm
+SHA1 91373beaeb40ed015b739f0199189bd441f91908 t/Dragger.t
 SHA1 a661a39e55a4127aecb1b97a631c4f01f7dce8c6 t/pod.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iD8DBQFI0FU6LFMCIV9q3ToRAv+3AJ9ZeLRbbGz3pOp8vIYyGHTnuQU5bwCdH1Hg
-pBxCpyj+B2mL81B4bsx9r8g=
-=6Hmm
+iD8DBQFJLdL9LFMCIV9q3ToRAg6xAJ9/ZAMGjDaIJNh8NZkAqtcsMBBEDwCgokEd
+d8ysuz/WYKj4BL1JaWBXZF4=
+=YMD/
 -----END PGP SIGNATURE-----

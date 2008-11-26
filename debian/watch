@@ -24,4 +24,4 @@
 # test with: uscan --report --verbose --watchfile=debian/watch
 
 version=3
-http://www.geocities.com/user42_kevin/gtk2-ex-dragger/Gtk2-Ex-Dragger-([0-9]+)\.tar\.gz\.bin
+http://www.geocities.com/user42_kevin/gtk2-ex-dragger/Gtk2-Ex-Dragger-([0-9]+)\.tgz

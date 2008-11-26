@@ -23,8 +23,8 @@ use warnings;
 use Gtk2::Ex::Dragger;
 use Test::More tests => 4;
 
-ok ($Gtk2::Ex::Dragger::VERSION >= 3);
-ok (Gtk2::Ex::Dragger->VERSION  >= 3);
+ok ($Gtk2::Ex::Dragger::VERSION >= 4);
+ok (Gtk2::Ex::Dragger->VERSION  >= 4);
 
 SKIP: {
   require Gtk2;
