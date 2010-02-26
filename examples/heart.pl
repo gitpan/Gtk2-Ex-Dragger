@@ -61,9 +61,9 @@ $viewport->signal_connect
      if ($event->button == 1) {
        print "$progname: start button drag in $viewport\n";
        $dragger->start ($event);
-       return 1; # don't propagate
+       return 1; # Gtk2::EVENT_STOP
      } else {
-       return 0; # do propagate
+       return 0; # Gtk2::EVENT_PROPAGATE
      }
    });
 
@@ -72,7 +72,7 @@ my $heart = Gtk2::Ex::WidgetCursor->new (widget => $viewport,
                                          priority => 10);
 sub beat {
   $heart->active (! $heart->active);   # toggle
-  return 1; # continue timer
+  return 1; # Glib::SOURCE_CONTINUE
 }
 Glib::Timeout->add (800, \&beat);  # 800 milliseconds
 

@@ -1,0 +1,86 @@
+#!/usr/bin/perl
+
+# my_pod2html -- convert POD to HTML, with some mangling
+
+# Copyright 2009, 2010 Kevin Ryde
+
+# my_pod2html is shared by several distributions.
+#
+# my_pod2html is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3, or (at your option) any later
+# version.
+#
+# my_pod2html is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+use strict;
+use warnings;
+
+MyPod2HTML->parse_from_file(@ARGV);
+exit 0;
+
+
+
+package MyPod2HTML;
+use base 'Pod::Simple::HTML';
+
+our $VERSION = 1;
+
+use constant DEBUG => 0;
+
+sub resolve_pod_link_by_table {
+  my ($self, $to, $section) = @_;
+
+  my $url;
+  if (defined $to) {
+    if ($to eq 'AptPkg') {
+      $url = 'http://packages.debian.org/libapt-pkg-perl';
+    }
+    if ($to eq 'apt-file') {
+      $url = 'http://packages.debian.org/apt-file';
+    }
+
+    if ($to =~ /^Glib::Ex::(SourceIds|SignalIds|FreezeNotify|TieProperties)/) {
+      $url = "http://user42.tuxfamily.org/glib-ex-ob"."jectbits/$1.html";
+    }
+    if ($to eq 'Gtk2::Ex::Widget'.'Cursor') {
+      $url = "http://user42.tuxfamily.org/glib-ex-widget'.'cursor/Widget'.'Cursor.html";
+    }
+    if ($to eq 'Ti'.'e:'.':TZ') {
+      $url = 'http://user42.tuxfamily.org/ti'.'e-'.'tz/TZ.html';
+    }
+    if ($to eq 'Time:'.':TZ') {
+      $url = 'http://user42.tuxfamily.org/ti'.'e-'.'tz/Time-'.'TZ.html';
+    }
+
+    if ($to =~ /^(Glib|Gtk2)($|::(?!Ex::))/) {
+      $to =~ s{::}{/};
+      $url = "http://gtk2-perl.sourceforge.net/doc/pod/$to.html"
+    }
+
+    if (defined $url) {
+      return ($url . (defined $section && $section ne '' ? "#$section" : ''));
+    }
+  }
+  return $self->SUPER::resolve_pod_link_by_table($to, $section);
+}
+
+
+# sub do_pod_link {
+#   my($self, $link) = @_;
+#   if (DEBUG) {
+#     print "\nlink tag=",$link->tagname," type=",$link->attr('type'),"\n";
+#     print "  to=",$link->attr('to')||'[none]',"\n";
+#     print "  section=",$link->attr('section')||'[none]',"\n";
+#   }
+# 
+#   my $to = $link->attr('to') || '';  # undef if internal link
+# 
+#   return $self->SUPER::do_pod_link($link);
+# }

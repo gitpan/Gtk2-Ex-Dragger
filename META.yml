@@ -1,23 +1,57 @@
 --- #YAML:1.0
-name:                Gtk2-Ex-Dragger
-version:             4
-abstract:            Mouse drag to move widget contents.
-license:             gpl
-author:              
+name:               Gtk2-Ex-Dragger
+version:            5
+abstract:           Mouse drag to move widget contents.
+author:
     - Kevin Ryde <user42@zip.com.au>
-generated_by:        ExtUtils::MakeMaker version 6.42
-distribution_type:   module
-requires:     
-    Glib::Ex::SignalIds:           0
-    Gtk2:                          1.200
-    Gtk2::Ex::SyncCall:            3
-    List::Util:                    0
-    Scalar::Util:                  0
-meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
-    version: 1.3
+license:            gpl
+distribution_type:  module
+configure_requires:
+    ExtUtils::MakeMaker:  0
+build_requires:
+    ExtUtils::MakeMaker:  0
+requires:
+    Glib::Ex::SignalIds:  0
+    Gtk2:                 1.200
+    Gtk2::Ex::SyncCall:   3
+    perl:                 5.008
+resources:
+    homepage:  http://user42.tuxfamily.org/gtk2-ex-dragger/index.html
+    license:   http://www.gnu.org/licenses/gpl.html
 no_index:
     directory:
+        - t
+        - inc
         - devel
-resources:
-    homepage: http://www.geocities.com/user42_kevin/gtk2-ex-dragger/index.html
+        - examples
+        - maybe
+generated_by:       ExtUtils::MakeMaker version 6.55_02
+meta-spec:
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4
+optional_features:
+    cursor:
+        description:  Setting a different mouse cursor while dragging.
+        requires:
+            Gtk2::Ex::WidgetCursor:  0
+    maximum_devel:
+        description:  Stuff used variously for development.
+        requires:
+            Pod::Simple::HTML:  0
+    maximum_examples:
+        description:  Be able to run all the example programs.
+        requires:
+            Gtk2::Ex::WidgetCursor:  0
+    maximum_tests:
+        description:  Have "make test" do as much as possible.
+        requires:
+            Parse::CPAN::Meta:   0
+            Test::DistManifest:  0
+            Test::NoWarnings:    0
+            Test::Pod:           1.00
+            Test::Synopsis:      0
+            Test::YAML::Meta:    0.13
+            YAML:                0
+            YAML::Syck:          0
+            YAML::Tiny:          0
+            YAML::XS:            0

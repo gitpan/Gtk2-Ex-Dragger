@@ -36,7 +36,7 @@
 use strict;
 use warnings;
 use Time::HiRes;
-use Gtk2 '-init';
+use Gtk2 1.200 '-init';
 use Gtk2::Ex::WidgetCursor;
 use Gtk2::Ex::Dragger;
 
@@ -97,9 +97,9 @@ $viewport->signal_connect
      my ($viewport, $event) = @_;
      if ($event->button == 1) {
        $dragger->start ($event);
-       return 1; # don't propagate
+       return 1; # Gtk2::EVENT_STOP
      } else {
-       return 0; # do propagate
+       return 0; # Gtk2::EVENT_PROPAGATE
      }
    });
 
@@ -107,7 +107,7 @@ $viewport->signal_connect
 sub busy {
   Gtk2::Ex::WidgetCursor->busy;
   Time::HiRes::usleep (400_000);   # 400 milliseconds
-  return 1; # continue timer
+  return 1; # Glib::SOURCE_CONTINUE
 }
 Glib::Timeout->add (1200, \&busy);  # 800 milliseconds
 

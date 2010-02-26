@@ -81,9 +81,9 @@ $viewport->signal_connect
      if ($event->button == 1) {
        print __FILE__.": start drag\n";
        $dragger->start ($event);
-       return 1; # don't propagate
+       return 1; # Gtk2::EVENT_STOP
      } else {
-       return 0; # do propagate
+       return 0; # Gtk2::EVENT_PROPAGATE
      }
    });
 

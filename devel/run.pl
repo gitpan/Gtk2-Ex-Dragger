@@ -185,7 +185,7 @@ PgUp, PgDown');
                                 $vadj->value - $vadj->page_increment));
 
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Down')) {
-         $vadj->set_value (min ($vadj->upper - $vadj->page_size,,
+         $vadj->set_value (min ($vadj->upper - $vadj->page_size,
                                 $vadj->value + $vadj->step_increment));
 
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Up')) {

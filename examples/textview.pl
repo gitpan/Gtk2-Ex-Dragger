@@ -39,10 +39,11 @@
 # subwindow) to the label.
 #
 
+use 5.008;
 use strict;
 use warnings;
 use FindBin;
-use Gtk2 '-init';
+use Gtk2 1.200 '-init';
 use Gtk2::Ex::Dragger;
 
 my $progname = $FindBin::Script;
@@ -87,13 +88,13 @@ my $dragger = Gtk2::Ex::Dragger->new
 $textview->signal_connect
   (button_press_event => sub {
      my ($textview, $event) = @_;
-     if ($event->button == 1 && $event->state == 'control-mask') {
+     if ($event->button == 1 && $event->state >= ['control-mask']) {
        print "$progname: start drag in textview\n";
        $dragger->start ($event);
-       return 1; # don't propagate event
+       return 1; # Gtk2::EVENT_STOP
 
      } else {
-       return 0; # do propagate event
+       return 0; # Gtk2::EVENT_PROPAGATE
      }
    });
 

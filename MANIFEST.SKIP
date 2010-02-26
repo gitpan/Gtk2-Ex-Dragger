@@ -1,0 +1,107 @@
+#!/usr/bin/perl
+
+# MANIFEST.SKIP -- my various excluded files
+
+# Copyright 2008, 2009, 2010 Kevin Ryde
+
+# This file is shared among several distributions.
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This file is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# cf. /usr/share/perl/5.10/ExtUtils/MANIFEST.SKIP
+
+
+# emacs backups
+~$
+# emacs locks
+(^|/)\.#
+# emacs autosave
+(^|/)#
+
+# own distdir
+^[A-Za-z][A-Za-z0-9-_]*-\d+/
+# own dist files
+\.tar$
+\.tar\.gz$
+\.deb$
+
+# ExtUtils::MakeMaker leaving Makefile.old
+# and "myman" leaving MANIFEST.old
+\.old$
+
+# built - MakeMaker
+^Makefile$
+^blib
+^pm_to_blib
+^TAGS$
+# MakeMaker 6.18 to 6.25, apparently
+^blibdirs\.ts$
+
+# built - cdbs and debhelper
+^debian/stamp-
+^debian/.*\.log$
+
+# built - texinfo.tex temporaries
+\.(aux|cp|cps|fn|fns|ky|log|pg|toc|tp|tps|vr)$
+
+# built - xsub .c, .o, try not to exclude ordinary C files though, maybe ...
+#(^|/)[A-Z][A-Za-z0-9_]*\.c$
+(^|/[^Z])[^/]+\.c$
+\.o$
+\.bs$
+
+# built - configury
+^conftest
+^config\.h$
+^myconfig\.h$
+
+# built - toplevel html pages
+^[a-zA-Z][^./]+\.html$
+
+# cpantesters reports
+^msg\d*\.html$
+
+# inc/MyMakefileExtras.pm "diff-prev"
+^diff\.tmp
+# inc/MyMakefileExtras.pm "lintian-source"
+^temp-lintian
+
+
+# my dists
+^dist-deb
+^up$
+^c$
+
+# special case pulp test build stuff
+devel/h2xs/TestConstFoo/
+
+# special case mall executables
+devel/hblk
+devel/mallopt
+devel/mallstats
+devel/malltrim
+
+# special htmlext environs
+^test-dist/
+
+
+\.junk$
+\.bak$
+^backup
+^misc
+^maybe
+^samples
+^samp
+^formats
