@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Gtk2-Ex-Dragger
-version:            5
+version:            6
 abstract:           Mouse drag to move widget contents.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -38,6 +38,7 @@ optional_features:
         description:  Stuff used variously for development.
         requires:
             Pod::Simple::HTML:  0
+            warnings::unused:   0
     maximum_examples:
         description:  Be able to run all the example programs.
         requires:
@@ -45,13 +46,4 @@ optional_features:
     maximum_tests:
         description:  Have "make test" do as much as possible.
         requires:
-            Parse::CPAN::Meta:   0
-            Test::DistManifest:  0
-            Test::NoWarnings:    0
-            Test::Pod:           1.00
-            Test::Synopsis:      0
-            Test::YAML::Meta:    0.13
-            YAML:                0
-            YAML::Syck:          0
-            YAML::Tiny:          0
-            YAML::XS:            0
+            Test::NoWarnings:  0

@@ -25,7 +25,7 @@ use Gtk2 1.200; # 1.200 for Gtk2::GDK_PRIORITY_REDRAW
 use List::Util qw(min max);
 use Scalar::Util;
 
-our $VERSION = 5;
+our $VERSION = 6;
 
 # set this to 1, 2 or 3 for some diagnostic prints
 use constant DEBUG => 0;
@@ -440,7 +440,7 @@ sub _do_motion_notify {
   # server round trip (as $disp->get_pointer or $device->get_state) then you
   # should use the position obtained, not throw it away.
   #
-  # Test can('is_hint') to allow for final $event a Gtk2::Gdk::Event::Button
+  # test can('is_hint') to allow for final $event a Gtk2::Gdk::Event::Button
   # release; such an event doesn't have an is_hint field.
   #
   my ($x, $y);

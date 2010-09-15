@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 # Copyright 2007, 2008, 2009, 2010 Kevin Ryde
 
@@ -32,7 +32,7 @@ use MyTestHelpers;
 
 require Gtk2::Ex::Dragger;
 
-my $want_version = 5;
+my $want_version = 6;
 {
   is ($Gtk2::Ex::Dragger::VERSION, $want_version, 'VERSION variable');
   is (Gtk2::Ex::Dragger->VERSION,  $want_version, 'VERSION class method');

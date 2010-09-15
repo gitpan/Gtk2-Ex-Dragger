@@ -5,6 +5,7 @@ debian/compat
 debian/control
 debian/copyright
 debian/rules
+debian/source/format
 debian/watch
 devel/layout.pl
 devel/run.pl
@@ -22,11 +23,11 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 README
 SIGNATURE
-t/0-META-read.t
-t/0-Test-DistManifest.t
-t/0-Test-Pod.t
-t/0-Test-Synopsis.t
-t/0-Test-YAML-Meta.t
 t/Dragger.t
 t/MyTestHelpers.pm
+xt/0-META-read.t
+xt/0-Test-DistManifest.t
+xt/0-Test-Pod.t
+xt/0-Test-Synopsis.t
+xt/0-Test-YAML-Meta.t
 META.yml                                 Module meta-data (added by MakeMaker)

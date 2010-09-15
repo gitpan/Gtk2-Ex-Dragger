@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 # 0-Test-YAML-Meta.t -- run Test::YAML::Meta if available
 
@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this file.  If not, see <http://www.gnu.org/licenses/>.
 
-use 5.000;
+# require 5.000;
 use strict;
 use warnings;
 use Test::More;

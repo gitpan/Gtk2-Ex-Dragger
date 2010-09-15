@@ -20,20 +20,48 @@
 package MyTestHelpers;
 use strict;
 use warnings;
+use Exporter;
+use vars qw(@ISA @EXPORT_OK %EXPORT_TAGS);
 
-use base 'Exporter';
-use vars qw(@EXPORT_OK %EXPORT_TAGS);
+@ISA = ('Exporter');
 @EXPORT_OK = qw(findrefs
                 main_iterations
                 warn_suppress_gtk_icon
                 glib_gtk_versions
-                any_signal_connections);
+                any_signal_connections
+                nowarnings);
 %EXPORT_TAGS = (all => \@EXPORT_OK);
 
-use constant DEBUG => 0;
+sub DEBUG { 0 }
 
 
 #-----------------------------------------------------------------------------
+
+{
+  my $warning_count;
+  my $stacktraces;
+  my $stacktraces_count = 0;
+  sub nowarnings_handler {
+    $warning_count++;
+    if ($stacktraces_count < 3 && eval { require Devel::StackTrace }) {
+      $stacktraces_count++;
+      $stacktraces .= "\n" . Devel::StackTrace->new->as_string() . "\n";
+    }
+    warn @_;
+  }
+  sub nowarnings {
+    $SIG{'__WARN__'} = \&nowarnings_handler;
+  }
+  END {
+    if ($warning_count) {
+      require Test::More;
+      Test::More::diag("Saw $warning_count warning(s):");
+      Test::More::diag($stacktraces);
+      Test::More::diag("Exit code 1 for warnings");
+      $? = 1;
+    }
+  }
+}
 
 sub findrefs {
   my ($obj) = @_;
@@ -119,10 +147,14 @@ sub glib_gtk_versions {
   }
 }
 
-# return true if there's any signal handlers connected to $obj
+# Return true if there's any signal handlers connected to $obj.
+#
+# Signal IDs are from 1 up, don't pass 0 to signal_handler_is_connected()
+# since in Glib 2.4.1 it spits out a g_log() error.
+#
 sub any_signal_connections {
   my ($obj) = @_;
-  my @connected = grep {$obj->signal_handler_is_connected ($_)} (0 .. 500);
+  my @connected = grep {$obj->signal_handler_is_connected ($_)} (1 .. 500);
   if (@connected) {
     my $connected = join(',',@connected);
     Test::More::diag ("$obj signal handlers connected: $connected");
@@ -142,14 +174,14 @@ sub wait_for_event {
     ($signame => sub {
        if (DEBUG) { Test::More::diag ("wait_for_event()   $signame received"); }
        $done = 1;
-       return 0; # Gtk2::EVENT_PROPAGATE
+       return 0; # Gtk2::EVENT_PROPAGATE (new in Gtk2 1.220)
      });
   my $timer_id = Glib::Timeout->add
     (30_000, # 30 seconds
      sub {
        $done = 1;
        Test::More::diag ("wait_for_event() oops, timeout waiting for $signame on $widget");
-       return 1; # Glib::SOURCE_CONTINUE
+       return 1; # Glib::SOURCE_CONTINUE (new in Glib 1.220)
      });
   $widget->get_display->sync;
 

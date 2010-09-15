@@ -40,6 +40,8 @@
 # ExtUtils::MakeMaker leaving Makefile.old
 # and "myman" leaving MANIFEST.old
 \.old$
+# ExtUtils::MakeMaker "metafile" rule temporary, left behind if interrupted
+^META_new\.yml$
 
 # built - MakeMaker
 ^Makefile$
@@ -48,6 +50,16 @@
 ^TAGS$
 # MakeMaker 6.18 to 6.25, apparently
 ^blibdirs\.ts$
+# msdos compiler output stuff using gcc,
+# "XSFILENAME.def" extension, and others fixed names it seems
+\.def$
+^dll\.base$
+^dll\.exp$
+# msdos compiler stuff using ms c
+\.pdb$
+
+# built - recent Module::Build nonsense
+^MYMETA\.yml$
 
 # built - cdbs and debhelper
 ^debian/stamp-
@@ -56,13 +68,18 @@
 # built - texinfo.tex temporaries
 \.(aux|cp|cps|fn|fns|ky|log|pg|toc|tp|tps|vr)$
 
-# built - xsub .c, .o, try not to exclude ordinary C files though, maybe ...
-#(^|/)[A-Z][A-Za-z0-9_]*\.c$
-(^|/[^Z])[^/]+\.c$
+# toplevel .c files built from .xs
+^[^/]+\.c$
+# built .o compiled and .bs from .xs
 \.o$
+\.obj$
 \.bs$
+#
+#(^|/)[A-Z][A-Za-z0-9_]*\.c$
+#/[^Z])[^/]+\.c$
 
 # built - configury
+^a\.out$
 ^conftest
 ^config\.h$
 ^myconfig\.h$
@@ -88,10 +105,24 @@
 devel/h2xs/TestConstFoo/
 
 # special case mall executables
-devel/hblk
-devel/mallopt
-devel/mallstats
-devel/malltrim
+^devel/hblk$
+^devel/mallopt$
+^devel/mallstats$
+^devel/malltrim$
+# special case fli executables
+^devel/mmap-multi$
+# special case widget-bits executables
+^devel/grandom$
+^devel/grandom-[a-z]+$
+# special case widget-cursor executables
+^devel/invisible-blank$
+# special case x'or executables
+^devel/gtk-gc-colour$
+# special case ipw and other executables
+^devel/misc$
+# special case m-i executables
+^devel/gen-bits$
+
 
 # special htmlext environs
 ^test-dist/
