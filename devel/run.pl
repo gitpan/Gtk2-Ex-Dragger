@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
-
+use 5.008;
 use strict;
 use warnings;
 use FindBin;
@@ -25,6 +25,9 @@ use List::Util qw(min max);
 use Gtk2 '-init';
 use Gtk2::Ex::Dragger;
 use Data::Dumper;
+
+# uncomment this to run the ### lines
+use Smart::Comments;
 
 my $progname = $FindBin::Script;
 
@@ -105,30 +108,35 @@ sub make {
       ($vinverted?"vinv":"vnorm"),
         "policy $update_policy\n";
 }
-make();
+# make();
 
+sub update {
+  if (defined $dragger) {
+    make ();
+  }
+}
 {
   my $button = Gtk2::CheckButton->new_with_label ('Confine');
   $vbox->pack_start ($button, 0,0,0);
   $button->signal_connect (toggled => sub {
                              $confine = $button->get_active;
-                             make();
+                             update();
                            });
 }
 {
   my $button = Gtk2::CheckButton->new_with_label ('H Inverted');
   $vbox->pack_start ($button, 0,0,0);
-  $button->signal_connect (notify => sub {
+  $button->signal_connect ('notify::active' => sub {
                              $hinverted = $button->get_active;
-                             make();
+                             update();
                            });
 }
 {
   my $button = Gtk2::CheckButton->new_with_label ('V Inverted');
   $vbox->pack_start ($button, 0,0,0);
-  $button->signal_connect (notify => sub {
+  $button->signal_connect ('notify::active' => sub {
                              $vinverted = $button->get_active;
-                             make();
+                             update();
                            });
 }
 {
@@ -141,7 +149,7 @@ make();
   $combobox->signal_connect
     (changed => sub {
        $update_policy = $combobox->get_active_text;
-       make();
+       update();
      });
 }
 {
@@ -163,7 +171,7 @@ make();
        print "$progname: area ${width}x${height} window events ",$area->window->get_events,"\n";
 
        $update_policy = 'continuous';
-       make();
+       update();
      });
 }
 
@@ -211,10 +219,15 @@ $area->signal_connect (button_press_event =>
                        sub {
                          my ($widget, $event) = @_;
                          print "$progname: start button $widget\n";
+                         sleep 1;
+                         make();
                          $dragger->start ($event);
                          return 0; # propagate
                        });
 
 $toplevel->show_all;
+
+### $dragger
+### area events: $area->window->get_events.''
 Gtk2->main;
 exit 0;

@@ -38,7 +38,7 @@
 
 use strict;
 use warnings;
-use Gtk2 1.200 '-init';
+use Gtk2 1.220 '-init';
 use Gtk2::Ex::Dragger;
 
 my $toplevel = Gtk2::Window->new('toplevel');
@@ -81,7 +81,7 @@ $ruler->signal_connect (button_press_event => sub {
                           if ($event->button == 1) {
                             $dragger->start ($event);
                           }
-                          return 0; # Gtk2::EVENT_PROPAGATE
+                          return Gtk2::EVENT_PROPAGATE;
                         });
 
 $toplevel->show_all;

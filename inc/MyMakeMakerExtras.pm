@@ -71,23 +71,23 @@ sub strip_comments {
 
 sub _meta_merge_shared_tests {
   my ($opts) = @_;
-  if (-e 't/0-Test-Pod.t') {
+  if (-e 'xt/0-Test-Pod.t') {
     _meta_merge_req_add (_meta_merge_maximum_tests($opts),
                          'Test::Pod' => '1.00');
   }
-  if (-e 't/0-Test-DistManifest.t') {
+  if (-e 'xt/0-Test-DistManifest.t') {
     _meta_merge_req_add (_meta_merge_maximum_tests($opts),
                          'Test::DistManifest' => 0);
   }
-  if (-e 't/0-Test-Synopsis.t') {
+  if (-e 'xt/0-Test-Synopsis.t') {
     _meta_merge_req_add (_meta_merge_maximum_tests($opts),
                          'Test::Synopsis' => 0);
   }
-  if (-e 't/0-Test-YAML-Meta.t') {
+  if (-e 'xt/0-Test-YAML-Meta.t') {
     _meta_merge_req_add (_meta_merge_maximum_tests($opts),
                          'Test::YAML::Meta' => '0.15');
   }
-  if (-e 't/0-META-read.t') {
+  if (-e 'xt/0-META-read.t') {
     if (_min_perl_version_lt ($opts, 5.00307)) {
       _meta_merge_req_add (_meta_merge_maximum_tests($opts),
                            'FindBin' => 0);
@@ -244,6 +244,7 @@ HERE
     # would prefer not to lock down the 't' dir existance at ./Makefile.PL
     # time, but it's a bit hard without without GNU make extensions
     if (-d 't') { $lint_files .= ' t/*.t'; }
+    if (-d 'xt') { $lint_files .= ' xt/*.t'; }
 
     foreach my $dir ('examples', 'devel') {
       my $pattern = "$dir/*.pl";
@@ -317,7 +318,7 @@ check-copyright-years:
 # only a DEBUG non-zero number is bad, so an expression can copy a debug from
 # another package
 check-debug-constants:
-	if egrep -nH 'DEBUG => [1-9]|^[ \t]*use Smart::Comments' $(EXE_FILES) $(TO_INST_PM) t/*.t; then exit 1; else exit 0; fi
+	if egrep -nH 'DEBUG => [1-9]|^[ \t]*use Smart::Comments' $(EXE_FILES) $(TO_INST_PM) t/*.t xt/*.t; then exit 1; else exit 0; fi
 
 check-spelling:
 	if find . -type f | egrep -v '(Makefile|dist-deb)' | xargs egrep --color=always -nHi '[r]efering|[w]riteable|[n]ineth|\b[o]mmitt?ed|[o]mited|[$$][rd]elf|[r]equrie|[n]oticable|[c]ontinous|[e]xistant|[e]xplict|[a]gument|[d]estionation|\b[t]he the\b|\b[n]ote sure\b'; \

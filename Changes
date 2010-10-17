@@ -16,6 +16,10 @@ You should have received a copy of the GNU General Public License along
 with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Version 7, October 2010
+    - use WidgetEvents for event mask cleanup
+    - docs on event mask setups if creating dragger under press event handler
+
 Version 6, September 2010
     - test manifest only as an author test
 

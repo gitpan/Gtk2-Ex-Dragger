@@ -29,7 +29,7 @@
 
 use strict;
 use warnings;
-use Gtk2 '-init';
+use Gtk2 1.220 '-init';
 use Gtk2::Ex::Dragger;
 
 my $scrollable_width = 300;
@@ -79,7 +79,7 @@ $layout->signal_connect (button_press_event =>
                          sub {
                            my ($widget, $event) = @_;
                            $dragger->start ($event);
-                           return 0; # Gtk2::EVENT_PROPAGATE
+                           return Gtk2::EVENT_PROPAGATE;
                          });
 
 $toplevel->show_all;

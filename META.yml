@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Gtk2-Ex-Dragger
-version:            6
+version:            7
 abstract:           Mouse drag to move widget contents.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -11,9 +11,11 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
+    Glib:                 1.220
     Glib::Ex::SignalIds:  0
-    Gtk2:                 1.200
+    Gtk2:                 1.220
     Gtk2::Ex::SyncCall:   3
+    Gtk2::Ex::WidgetEvents:  21
     perl:                 5.008
 resources:
     homepage:  http://user42.tuxfamily.org/gtk2-ex-dragger/index.html
@@ -46,4 +48,12 @@ optional_features:
     maximum_tests:
         description:  Have "make test" do as much as possible.
         requires:
-            Test::NoWarnings:  0
+            Parse::CPAN::Meta:   0
+            Test::DistManifest:  0
+            Test::Pod:           1.00
+            Test::Synopsis:      0
+            Test::YAML::Meta:    0.15
+            YAML:                0
+            YAML::Syck:          0
+            YAML::Tiny:          0
+            YAML::XS:            0

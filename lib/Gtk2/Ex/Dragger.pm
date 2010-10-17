@@ -21,15 +21,17 @@ use strict;
 use warnings;
 use Carp;
 use POSIX ();
-use Gtk2 1.200; # 1.200 for Gtk2::GDK_PRIORITY_REDRAW
+use Glib 1.220; # 1.220 for Glib::SOURCE_REMOVE
+use Gtk2 1.220; # 1.220 for Gtk2::EVENT_PROPAGATE
 use List::Util qw(min max);
 use Scalar::Util;
 
-our $VERSION = 6;
+use Gtk2::Ex::WidgetEvents;
 
-# set this to 1, 2 or 3 for some diagnostic prints
-use constant DEBUG => 0;
+# uncomment this to run the ### lines
+#use Smart::Comments;
 
+our $VERSION = 7;
 
 use constant DELAY_MILLISECONDS => 250;
 
@@ -53,16 +55,10 @@ sub new {
                    inverted   => delete $self->{'hinverted'} };
   $self->{'v'} = { adjustment => $vadj,
                    inverted   => delete $self->{'vinverted'} };
-
-  # These events end up being permanent additions to the event mask,
-  # remaining even after the Dragger is destroyed.  Button press/release and
-  # drag motions aren't too bad, and a dragger is most often a permanent
-  # addition to a widget's features anyway.
-  #
-  $widget->add_events (['button-press-mask',
-                        'button-motion-mask',
-                        'button-release-mask']);
-
+  $self->{'wevents'}
+    = Gtk2::Ex::WidgetEvents->new ($widget, ['button-press-mask',
+                                             'button-motion-mask',
+                                             'button-release-mask']);
   return $self;
 }
 
@@ -132,33 +128,34 @@ sub start {
                         { window_type       => 'temp',
                           wclass            => 'GDK_INPUT_ONLY',
                           override_redirect => 1 }));
-    if (DEBUG) { print "  confine_win $confine_win\n"; }
+    ### confine_win: "$confine_win"
     _resize_confine_win ($self);
     $confine_win->show;
 
     # ENHANCE-ME: $win->get_events is a server round-trip, maybe fetch only
     # the first time, or fetch once and then mask in the widget 'events'
     # property subsequently; or something cooperating with WidgetEvents ...
-    # 
-    my $event_mask = [ 'button-motion-mask', 'button-release-mask' ]
-      + ($win->get_events & ['button-press-mask',
+    #
+    ### widget events: $widget->get_events.''
+    ### window events: $widget->window->get_events.''
+    my $event_mask
+      = ($win->get_events & ['button-press-mask',
                              'pointer-motion-hint-mask',
                              'structure-mask',
-                             'property-change-mask' ]);
-    if (DEBUG) { print "  events $event_mask\n"; }
+                             'property-change-mask' ])
+        + ['button-motion-mask', 'button-release-mask'];
+    ### events: "$event_mask"
+    ### grab to           : $widget->window.''
+    ### cf button press on: $event->window.''
+    ### cf size win       : "$win"
 
-    if (DEBUG) {
-      print "  grab to ",$widget->window,"\n";
-      print "  cf button press on ",$event->window,"\n";
-      print "  cf size win ",$win,"\n";
-    }
     my $status = Gtk2::Gdk->pointer_grab ($widget->window,
                                           0,      # owner events
                                           $event_mask,
                                           $confine_win,
                                           undef,  # cursor inherited
                                           $event->time);
-    if (DEBUG) { print "  grab $status  time ",$event->time,"\n"; }
+    ### grab: "$status time ".$event->time
     if ($status eq 'success') {
       $self->{'grabbed'} = 1;
     } else {
@@ -196,36 +193,34 @@ sub start {
 #
 sub _do_grab_broken {
   my ($widget, $event, $ref_weak_self) = @_;
-  my $self = $$ref_weak_self || return 0; # Gtk2::EVENT_PROPAGATE
-  if (DEBUG) {
-    print "Dragger grab broken\n";
-    print "  event window  ", $event->window, "\n";
-    print "  widget window ", $widget->window, "\n";
-  }
+  my $self = $$ref_weak_self || return Gtk2::EVENT_PROPAGATE;
+  ### Dragger _do_grab_broken()
+  ### event window : $event->window.''
+  ### widget window: $widget->window.''
 
   if ($self->{'grabbed'} && $event->window == $widget->window) {
     $self->{'grabbed'} = 0;
     $self->stop ($event);
   }
-  return 0; # Gtk2::EVENT_PROPAGATE
+  return Gtk2::EVENT_PROPAGATE;
 }
 
 # 'button-release-event' signal on the target widget
 sub _do_button_release {
   my ($widget, $event, $ref_weak_self) = @_;
-  if (DEBUG) { print "Dragger button release\n"; }
-  my $self = $$ref_weak_self || return 0; # Gtk2::EVENT_PROPAGATE
+  ### Dragger _do_button_release()
+  my $self = $$ref_weak_self || return Gtk2::EVENT_PROPAGATE;
 
   if ($event->button == $self->{'button'}) {
     _do_motion_notify ($widget, $event, \$self); # final position
     $self->stop ($event);
   }
-  return 0; # Gtk2::EVENT_PROPAGATE
+  return Gtk2::EVENT_PROPAGATE;
 }
 
 sub stop {
   my ($self, $event) = @_;
-  if (DEBUG) { print "Dragger stop\n"; }
+  ### Dragger stop()
 
   if (! delete $self->{'active'}) { return; }
 
@@ -252,19 +247,19 @@ sub stop {
 # 'configure-event' signal on the target widget
 sub _do_configure_event {
   my ($widget, $event, $ref_weak_self) = @_;
-  my $self = $$ref_weak_self || return 0; # Gtk2::EVENT_PROPAGATE
+  my $self = $$ref_weak_self || return Gtk2::EVENT_PROPAGATE;
 
   # new window size changes the scale factor and hence how many pixels to
   # the adjustable limits
   _resize_confine_win ($self);
-  return 0; # Gtk2::EVENT_PROPAGATE
+  return Gtk2::EVENT_PROPAGATE;
 }
 
 # 'changed' signal on either of the adjustments
 sub _do_adjustment_changed {
   my ($adj, $ref_weak_self) = @_;
   my $self = $$ref_weak_self || return;
-  if (DEBUG) { print "Dragger: $adj changed\n"; }
+  ### Dragger _do_adjustment_changed(): "$adj"
 
   # new page size changes the scale factor and hence how many pixels to the
   # adjustable limits
@@ -292,8 +287,7 @@ sub _do_adjustment_value_changed {
 
   if ($adj->value == $axis->{'last_value'}) { return; }
 
-  if (DEBUG) { print "Dragger: value changed externally to ",
-                 $adj->value,"\n"; }
+  ### Dragger value changed externally to: $adj->value
   $axis->{'last_value'} = $axis->{'adjustment'}->value;
   $axis->{'unapplied'} = 0;
 
@@ -399,8 +393,7 @@ sub _resize_confine_win {
   $confine_width  = min ($confine_width,  $root_width  - $confine_x);
   $confine_height = min ($confine_height, $root_height - $confine_y);
 
-  if (DEBUG) { print "  confine to $confine_x,$confine_y",
-                 "  ${confine_width}x${confine_height}\n"; }
+  ### confine to: "$confine_x,$confine_y   ${confine_width}x${confine_height}"
   $self->{'confine_win'}->move_resize ($confine_x, $confine_y,
                                        $confine_width, $confine_height);
 }
@@ -431,8 +424,8 @@ sub _resize_confine_win {
 #
 sub _do_motion_notify {
   my ($widget, $event, $ref_weak_self) = @_;
-  if (DEBUG >= 2) { print "Dragger: motion\n"; }
-  my $self = $$ref_weak_self || return 0; # Gtk2::EVENT_PROPAGATE
+  #### Dragger _do_motion_notify()
+  my $self = $$ref_weak_self || return Gtk2::EVENT_PROPAGATE;
 
   # Believe no need for Gtk 2.12 $event->request_motions here since our
   # device is only ever the mouse, so $win->get_pointer is enough.  Besides,
@@ -454,13 +447,12 @@ sub _do_motion_notify {
   my ($win_width, $win_height) = $win->get_size;
   _set_value ($self, $self->{'h'}, $win_width, $x);
   _set_value ($self, $self->{'v'}, $win_height, $y);
-  return 0; # Gtk2::EVENT_PROPAGATE
+  return Gtk2::EVENT_PROPAGATE;
 }
 
 sub _set_value {
   my ($self, $axis, $win_size, $pixel) = @_;
-  if (DEBUG >= 3) { require Data::Dumper;
-                    print "  pixel $pixel axis ",Data::Dumper::Dumper($axis); }
+  ##### Dragger _set_value(): "pixel $pixel", $axis
 
   my $adj = $axis->{'adjustment'} || return;
 
@@ -487,10 +479,10 @@ sub _set_value {
   }
   $axis->{'unapplied'} = $unapplied;
 
-  if (DEBUG) { print "  set value $new_value\n"; }
+  ### set value: $new_value
   $adj->value ($new_value);
   $axis->{'last_value'} = $adj->value; # refetch for float rounding
-  if (DEBUG) { print "  rounded to float ",$axis->{'last_value'},"\n"; }
+  ### rounded to float: $axis->{'last_value'}
   $adj->notify ('value');
 
   my $update_policy = $self->{'update_policy'} || 'default';
@@ -516,7 +508,7 @@ sub _set_value {
   # default policy
   require Gtk2::Ex::SyncCall;
   if (! $self->{'sync_obj'} && ! $self->{'timer_id'}) {
-    if (DEBUG >= 2) { print "Dragger: sync send\n"; }
+    #### Dragger SyncCall send
     my $ref_weak_self = _ref_weak ($self);
     $self->{'sync_obj'} = Gtk2::Ex::SyncCall->sync
       ($self->{'widget'}, \&_do_sync, $ref_weak_self);
@@ -530,12 +522,12 @@ sub _set_value {
 #
 sub _do_timer_delayed {
   my ($ref_weak_self) = @_;
-  my $self = $$ref_weak_self || return 0; # Glib::SOURCE_REMOVE
-  if (DEBUG >= 2) { print "Dragger: timer for 'delayed'\n"; }
+  my $self = $$ref_weak_self || return Glib::SOURCE_REMOVE;
+  #### Dragger _do_timer_delayed()
 
   $self->{'timer_id'} = 0;
   _emit_pending ($self);
-  return 0; # Glib::SOURCE_REMOVE
+  return Glib::SOURCE_REMOVE;
 }
 
 # sync response for 'default' policy
@@ -546,7 +538,7 @@ sub _do_timer_delayed {
 #
 sub _do_sync {
   my ($ref_weak_self) = @_;
-  if (DEBUG >= 2) { print "Dragger: sync response\n"; }
+  #### Dragger _do_sync()
   my $self = $$ref_weak_self || return;
 
   $self->{'sync_obj'} = 0;
@@ -566,9 +558,8 @@ sub _do_sync {
 #
 sub _do_timer_sync {
   my ($ref_weak_self) = @_;
-  my $self = $$ref_weak_self || return 0; # Glib::SOURCE_REMOVE
-  if (DEBUG >= 2) { print "Dragger: timer for sync; with sync ",
-                      $self->{'sync_obj'} ? "still running\n" : "finished\n"; }
+  my $self = $$ref_weak_self || return Glib::SOURCE_REMOVE;
+  #### Dragger _do_timer_sync() with sync: "$self->{'sync_obj'}"
 
   if (my $id = $self->{'idle_id'}) {
     $self->{'idle_id'} = 0;
@@ -579,14 +570,14 @@ sub _do_timer_sync {
   if (! $self->{'sync_obj'}) {
     _emit_pending ($self);
   }
-  return 0; # Glib::SOURCE_REMOVE
+  return Glib::SOURCE_REMOVE;
 }
 
 # idle handler for 'default' policy
 sub _do_idle {
   my ($ref_weak_self) = @_;
-  if (DEBUG >= 2) { print "Dragger: idle after sync\n"; }
-  my $self = $$ref_weak_self || return 0; # Glib::SOURCE_REMOVE
+  #### Dragger _do_idle() after sync
+  my $self = $$ref_weak_self || return Glib::SOURCE_REMOVE;
 
   if (my $id = $self->{'timer_id'}) {
     $self->{'timer_id'} = 0;
@@ -594,7 +585,7 @@ sub _do_idle {
   }
   $self->{'idle_id'} = 0;
   _emit_pending ($self);
-  return 0; # Glib::SOURCE_REMOVE
+  return Glib::SOURCE_REMOVE;
 }
 
 sub _emit_pending {
@@ -677,6 +668,8 @@ sub _ref_weak {
 1;
 __END__
 
+=for stopwords Gtk2-Ex-Dragger Dragger scrollbars WidgetCursor natively viewport dragger scrollbar timestamp Gdk ungrab Viewport TextView pixmap Ryde
+
 =head1 NAME
 
 Gtk2::Ex::Dragger -- drag to move adjustment position
@@ -696,7 +689,7 @@ of a widget horizontally, vertically, or both.  It works on any windowed
 widget which has C<Gtk2::Adjustment> objects controlling the visible part.
 
 The width or height of the widget corresponds to the "page" in the
-adjustment and Dragger scales pixel movement onto the adjustment "value"
+adjustment.  Dragger scales pixel movement onto the adjustment "value"
 accordingly.  It's then up to the usual widget drawing to follow
 C<value-changed> signals from the adjustment for redraws, the same as for
 scrollbars etc.  The effect for the user is that the contents are pulled
@@ -719,27 +712,68 @@ around with the mouse.
 
 If you've got scrollbars then they move with the dragging too.  It can be
 good to have both ways of moving since the scrollbars give visual feedback
-but dragging allows fine movements if the visible page is a very small part
-of the adjustment extent.
+but dragging allows finer movements if the visible page is a very small part
+of the total adjustable extent.
 
-The "confine" option lets you to restict mouse movement to screen positions
-corresponding to the adjustment extents, so the user gets an obvious
+The "confine" option lets you to restrict mouse movement to screen positions
+corresponding to the adjustment upper/lower, so the user gets an obvious
 feedback at the limits.
 
 The "cursor" option changes the mouse pointer cursor while dragging.  This
-is good if it's not quite clear for a given widget which button press etc
+is good if it's not clear for a given widget which button press etc
 activates a drag.  The cursor is set through WidgetCursor (see
 L<Gtk2::Ex::WidgetCursor>) and so cooperates with other uses of that (like
 its global "busy" indication).
 
 Dragger can work on both natively scrollable widgets and widgets put into a
 C<Gtk2::Viewport>.  For a viewport it's the viewport widget which is passed
-to the dragger since that's the widget showing a larger underlying thing.
+to the dragger since that's the widget showing a portion of a larger
+underlying thing.
 
-Changes to the adjustment value, extents, page size, or the widget window
-size are all allowed during a drag.  A change to the value for example could
-be from a keyboard page-up etc.  In all cases the Dragger continues relative
-to the new position, including updating the "confine" limits.
+Changes to the adjustment value, upper/lower, page size, or the widget
+window size are all allowed during a drag.  A change to the value could come
+from a keyboard page-up etc.  In all cases the Dragger continues relative to
+the new position and will update any "confine" window limits.
+
+=head2 Event Mask
+
+The dragger adds the following events mask bits to the target widget.  It
+uses the WidgetEvents mechanism (see L<Gtk2::Ex::WidgetEvents>) so they're
+cleaned up if the dragger is destroyed.
+
+    button-press-mask
+    button-motion-mask
+    button-release-mask
+
+The dragger doesn't itself have a button press handler (at present), rather
+an application is expected to start the drag for some button/modifier
+combination.  The dragger adds the press mask in readiness for that.
+
+If you want defer dragger creation until actually needed in a button press
+then you must explicitly select the motion and release events beforehand.
+For example,
+
+    # events selected beforehand
+    $widget->add_events (['button-press-mask',
+                          'button-motion-mask',
+                          'button-release-mask']);
+
+    # dragger not created until actually wanted
+    sub my_button_press_handler {
+      my ($widget, $event) = @_;
+      if (some_thing()) {
+        require Gtk2::Ex::Dragger;
+        $dragger = Gtk2::Ex::Dragger->new (...);
+        $dragger->start ($event);
+      }
+    }
+
+The motion and release masks beforehand are important if the application is
+lagged.  It's possible the user has already released when the application
+receives the press.  If the release mask wasn't already on then the release
+event would not be generated.  If you forget those masks then currently the
+dragger ends up turned on but then doesn't work and won't turn off (either
+all the time, or when lagged, or the first use through).
 
 =head1 FUNCTIONS
 
@@ -764,19 +798,19 @@ are mandatory, the rest are options.
 
 The C<hinverted> or C<vinverted> flags swap the direction the adjustments
 are moved.  Normally C<hadjustment> increases to the left and C<vadjustment>
-increases upwards.  Inverting goes instead to the right, and downwards.
-This is the same as C<Gtk2::Scrollbar>, so if you've set C<inverted> on your
-scrollbar then do the same to the dragger.
+increases upwards.  Inverting goes instead to the right or downwards.  This
+is the same sense as inverted on C<Gtk2::Scrollbar>, so if you set
+C<inverted> on a scrollbar then do the same to the dragger.
 
 C<cursor> is any cursor name or object accepted by the WidgetCursor
-mechanism (see L<Gtk2::Ex::WidgetCursor>).  If unset or undef (the default)
-then the cursor is unchanged and you don't need WidgetCursor installed in
-that case.
+mechanism (see L<Gtk2::Ex::WidgetCursor>).  If unset or C<undef> (the
+default) then the cursor is unchanged and you don't need WidgetCursor
+installed in that case.
 
 =item C<< $dragger->start ($event) >>
 
 Begin a drag.  C<$event> must be a C<Gtk2::Gdk::Event::Button> object; it
-gives the button doing the drag and a server timestamp.
+gives the button doing the drag and the server timestamp.
 
 =item C<< $dragger->stop () >>
 
@@ -785,11 +819,11 @@ gives the button doing the drag and a server timestamp.
 Stop C<$dragger>, if it's active.  Normally a dragger stops by itself when
 the dragging button is released, but this method can be do it sooner.
 
-If you stop in response to a Gdk event then pass that C<Gtk2::Gdk::Event> so
-its timestamp can be used.  (This matters under the "confine" option since
-it's implemented by an explicit grab.  If application event processing is a
-bit lagged a timestamp ensures the ungrab doesn't kill a later button press
-passive grab or an explicit grab by another client.)
+If you stop in response to a C<Gtk2::Gdk::Event> then pass that so its
+timestamp can be used.  This matters when the dragger uses an active grab.
+If application event processing is a bit lagged the timestamp ensures the
+ungrab doesn't kill a later passive grab on a button press or an explicit
+grab by another client.
 
 =back
 
@@ -806,7 +840,7 @@ similar.
 
 =item C<"continuous">
 
-C<value-changed> is emitted on every motion event processed.
+C<value-changed> is emitted on every motion event.
 
 =item C<"delayed">
 
@@ -832,10 +866,10 @@ guarantee updates are not deferred indefinitely.
 
 Choosing a policy is a matter of how good the drawing in your target widget
 is.  You can see the difference in the example programs included in the
-sources on a big block of text in a C<Gtk2::TextView> versus a Viewport plus
-C<Gtk2::Label>.  The TextView goes very close to coping with C<continuous>
-update policy, but the same on the Label's naive drawing floods the server
-to the point of being unusable.
+sources which draw a big block of text in a C<Gtk2::TextView> versus a
+Viewport plus C<Gtk2::Label>.  The TextView goes very close to coping with
+C<continuous> update policy, but the same on the Label's simple-minded
+drawing floods the server to the point of being unusable.
 
 Dragger recognises C<pointer-motion-hint-mask> on the target widget (or
 rather the motion event C<is_hint>) and knows to do a
@@ -844,9 +878,8 @@ a deliberate server round-trip on each move, with the effect that each
 motion waits until the drawing etc from the previous one has finished.
 Generally you can set C<update_policy> to C<continuous> in this case.  Give
 it a try if you're having trouble with excessive drawing or excessive
-network traffic with full motion events.  (For the drawing, the Dragger
-default C<update_policy> is meant to achieve the same effect
-asynchronously.)
+network traffic with full motion events.  For the drawing, the Dragger
+default C<update_policy> is meant to achieve the same effect asynchronously.
 
 It's a bit unfortunate that an update policy is part of a controller like a
 scrollbar or dragger.  It'd be better if redraw frequency were left to the
@@ -867,6 +900,22 @@ particular it's safe to hold the dragger object in the widget instance data
 without creating a circular reference.  But strong references are kept to
 the adjustment objects since they probably should stay alive as long as the
 widget and dragger do.  But perhaps this will change.
+
+Having the C<button-motion-mask> and C<button-release-mask> set before the
+drag won't normally cost very many extra events.  It'd be possible for the
+dragger to turn on the motion mask on starting (with an active grab), if not
+already on, and C<< $display->get_pointer >> to check for any movement it
+might have missed.  For now that doesn't seem worthwhile.
+
+A missed release event can't be properly handled after the fact.
+A C<get_pointer> can say whether the button is now down, but it may be the
+user pressing elsewhere, and the x,y position of the drag release has been
+completely lost.  That final release position is quite important.  If the
+application is lagged you still want a press, drag, release to move the
+widget contents by that distance moved.  It's wrong and quite annoying if
+the contents jump to where the mouse has gone after release.  (The
+scrollbars in some versions of mozilla for instance got that sort of thing
+wrong.)
 
 =head1 SEE ALSO
 

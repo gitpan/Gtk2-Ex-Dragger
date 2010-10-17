@@ -39,7 +39,7 @@
 
 use strict;
 use warnings;
-use Gtk2 '-init';
+use Gtk2 1.220 '-init';
 use Gtk2::Ex::Dragger;
 
 my $toplevel = Gtk2::Window->new('toplevel');
@@ -81,9 +81,9 @@ $viewport->signal_connect
      if ($event->button == 1) {
        print __FILE__.": start drag\n";
        $dragger->start ($event);
-       return 1; # Gtk2::EVENT_STOP
+       return Gtk2::EVENT_STOP;
      } else {
-       return 0; # Gtk2::EVENT_PROPAGATE
+       return Gtk2::EVENT_PROPAGATE;
      }
    });
 
