@@ -78,6 +78,13 @@ $table->attach ($area, 0,1, 0,1,
                 ['expand','shrink','fill'],['expand','shrink','fill'], 0,0);
 $area->set_flags ('can-focus');
 $area->grab_focus;
+$area->add_events (['button-press-mask',
+                    'button-motion-mask',
+                    'button-release-mask']);
+# $area->signal_connect (motion_notify_event => sub {
+#                          print "$progname: motion_notify\n";
+#                          return Gtk2::EVENT_PROPAGATE;
+#                        });
 
 my $vadj = Gtk2::Adjustment->new (100, 0, 300, 1, 10, 100);
 my $vscroll = Gtk2::VScrollBar->new ($vadj);
@@ -139,16 +146,28 @@ sub update {
                              update();
                            });
 }
+# {
+#   my $combobox = Gtk2::ComboBox->new_text;
+#   $vbox->pack_start ($combobox, 0,0,0);
+#   foreach my $policy ('default', 'continuous', 'discontinuous', 'delayed') {
+#     $combobox->append_text ($policy);
+#   }
+#   $combobox->set_active (0);
+#   $combobox->signal_connect
+#     (changed => sub {
+#        $update_policy = $combobox->get_active_text;
+#        update();
+#      });
+# }
 {
-  my $combobox = Gtk2::ComboBox->new_text;
+  require Gtk2::Ex::ComboBox::Enum;
+  my $combobox = Gtk2::Ex::ComboBox::Enum->new
+    (enum_type   => 'Gtk2::Ex::Dragger::UpdatePolicy',
+     active_nick => Gtk2::Ex::Dragger->find_property('update-policy')->get_default_value);
   $vbox->pack_start ($combobox, 0,0,0);
-  foreach my $policy ('default', 'continuous', 'discontinuous', 'delayed') {
-    $combobox->append_text ($policy);
-  }
-  $combobox->set_active (0);
   $combobox->signal_connect
-    (changed => sub {
-       $update_policy = $combobox->get_active_text;
+    ('notify::active-nick' => sub {
+       $update_policy = $combobox->get('active-nick');
        update();
      });
 }
@@ -174,41 +193,51 @@ sub update {
        update();
      });
 }
+my $sleep = 0;
+{
+  my $button = Gtk2::CheckButton->new_with_label ('Sleep on Start');
+  $vbox->pack_start ($button, 0,0,0);
+  $button->signal_connect
+    ('notify::active' => sub {
+       $sleep = $button->get_active;
+       print "$progname: setup sleep $sleep\n";
+     });
+}
 
 {
   my $label = Gtk2::Label->new ('Keys:
 Up,Down,Left,Right,
 PgUp, PgDown');
   $vbox->pack_start ($label, 0,0,0);
-
+  
   $area->signal_connect
     (key_press_event => sub {
        my ($area, $event) = @_;
        if ($event->keyval == Gtk2::Gdk->keyval_from_name('Page_Down')) {
          $vadj->set_value (min ($vadj->upper - $vadj->page_size,
                                 $vadj->value + $vadj->page_increment));
-
+         
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Page_Up')) {
          $vadj->set_value (max ($vadj->lower,
                                 $vadj->value - $vadj->page_increment));
-
+         
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Down')) {
          $vadj->set_value (min ($vadj->upper - $vadj->page_size,
                                 $vadj->value + $vadj->step_increment));
-
+         
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Up')) {
          $vadj->set_value (max ($vadj->lower,
                                 $vadj->value - $vadj->step_increment));
-
-
+         
+         
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Left')) {
          $hadj->set_value (min ($hadj->upper - $hadj->page_size,
                                 $hadj->value + $hadj->step_increment));
-
+         
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Right')) {
          $hadj->set_value (max ($hadj->lower,
                                 $hadj->value - $hadj->step_increment));
-
+         
        }
        return 0; # propagate
      });
@@ -218,9 +247,13 @@ $area->add_events ('button-press-mask');
 $area->signal_connect (button_press_event =>
                        sub {
                          my ($widget, $event) = @_;
-                         print "$progname: start button $widget\n";
-                         sleep 1;
+                         print "$progname: start button press on $widget\n";
+                         if ($sleep) {
+                           print "$progname: sleep 1\n";
+                           sleep 1;
+                         }
                          make();
+                         print "$progname: start now 1\n";
                          $dragger->start ($event);
                          return 0; # propagate
                        });
@@ -231,3 +264,12 @@ $toplevel->show_all;
 ### area events: $area->window->get_events.''
 Gtk2->main;
 exit 0;
+
+
+__END__
+
+
+=head1 BUGS
+
+There's no C<notify> signal if the C<widget> property becomes C<undef> due
+to weakening.

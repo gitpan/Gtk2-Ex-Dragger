@@ -15,13 +15,13 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 842745cb706f8f2126506f544492f7a80dbe29b3 COPYING
-SHA1 f2d32b28fcab0cf535897afc238357be43b7648e Changes
-SHA1 537eaedf417b82ffcc14aea1a4eb24b70e32fac0 MANIFEST
+SHA1 d85bfcba4896e3ec23b9e2c996f2f0d3a98e0dd4 Changes
+SHA1 81f1997d33873bef8c0454596ec49df1391b7db7 MANIFEST
 SHA1 e6e7c2904ea5d300c0ddf70fc5a80f5005229aa9 MANIFEST.SKIP
-SHA1 7cf2a8f9ced4228a602e87812a3e4d3852db3044 META.yml
-SHA1 9e914874dd8f990ac02d7684e3ab6e076920c4ae Makefile.PL
+SHA1 585183eec09d07d4f507eebbb9f17246913fb460 META.yml
+SHA1 dda95df9f142bf30fa1fe00125495b26fa35ab05 Makefile.PL
 SHA1 2ad08241d1415a0d19c99041da564088609e45b8 README
-SHA1 348a7107d39cb22d538ea35be6a7a5496c0d396c debian/changelog
+SHA1 2cc2fa88457befcc7814493ac2372deb7d4c0f5e debian/changelog
 SHA1 ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 debian/compat
 SHA1 009b3c85efe3c991abd3d3df2b471407ccfc1e52 debian/control
 SHA1 155f1ba9789ab03a9dfb0b01bdff8fea2751674d debian/copyright
@@ -29,17 +29,19 @@ SHA1 a900deb0f6cdbdd62a2899a36accd06fd63d2e58 debian/rules
 SHA1 61652cd1568dcf2614df833eba241755eee34e89 debian/source/format
 SHA1 1b06fb6650633b109153ad4148d11a48a5713a93 debian/watch
 SHA1 3d6b2a2d92cf36f8b4eddc66965404773abdd6d2 devel/layout.pl
-SHA1 36fae05f5355081f59e0c39f821f35d1a28b0599 devel/run.pl
+SHA1 426c59bcb73e069a42097ca9209a3e9f9d3cf71c devel/run.pl
+SHA1 3cb258b573d3bf36f61ff48cd32b1b4887863605 devel/viewport.pl
+SHA1 c7f32394c27f1046baba6daefd1a7ab1dc632be8 examples/builder.pl
 SHA1 fd6234724bb48aed8ed670fd043b6326168be056 examples/busy.pl
 SHA1 491d2a08c2fc3c35366c2fed33152a2739e8b024 examples/heart.pl
 SHA1 fb2ecd859c53ec6cbdf6bc24df162abb312848e4 examples/label.pl
 SHA1 40edf9c2dc4f9669111dabfec661349a941cdd19 examples/layout.pl
 SHA1 1c4fd7b7819af1ca2bc2fb71470b26b355c677ba examples/textview.pl
 SHA1 7a6615f2f00fb63290e891f171a109a803fd759b examples/vruler.pl
-SHA1 3cf3345a9177dbe362dfc8fbf192272f4a611ca8 inc/MyMakeMakerExtras.pm
+SHA1 4fb53efe76b3b2264eaa4cf7780cb0c4923e18a5 inc/MyMakeMakerExtras.pm
 SHA1 692a1ddc2ca6b98cac7b48ea40bc1ac1509e8ed9 inc/my_pod2html
-SHA1 c424747febf592449eed3828371069b66d12fada lib/Gtk2/Ex/Dragger.pm
-SHA1 331eba14913e9f72a7a23159c9d2a4eb913b339d t/Dragger.t
+SHA1 8d2a389afc706c69328e41032e6ce7ee240a084b lib/Gtk2/Ex/Dragger.pm
+SHA1 78a3665dfbc77e74f5ffe2c749bade8ad0dd1e27 t/Dragger.t
 SHA1 5e5680b471811244fe93571efc23e7b6089cac3b t/MyTestHelpers.pm
 SHA1 9127f78a0dfa04976acbb979dd7862ef59a74c58 xt/0-META-read.t
 SHA1 37abd43b41068804ea4bb099fdd89af21be82926 xt/0-Test-DistManifest.t
@@ -49,7 +51,7 @@ SHA1 fb517c2fae5ddac559318bf6a224949115ea3129 xt/0-Test-YAML-Meta.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iD8DBQFMuplgLFMCIV9q3ToRAnY9AJ49l6QIasNiqqOCD6Ev1hsZY9Va7QCdErjc
-OjvdAckzHFV4YnxwQEoZKKg=
-=vWb+
+iD8DBQFM3zGdLFMCIV9q3ToRAvx0AKCgRQu6BDKHzNtSoXrgEgucoUq+UQCeLGo3
+R2Hp1xVduiRoKoH62u2TYGo=
+=g/MT
 -----END PGP SIGNATURE-----

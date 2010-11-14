@@ -26,49 +26,241 @@ use Gtk2 1.220; # 1.220 for Gtk2::EVENT_PROPAGATE
 use List::Util qw(min max);
 use Scalar::Util;
 
+use Glib::Ex::SignalIds;
 use Gtk2::Ex::WidgetEvents;
 
 # uncomment this to run the ### lines
 #use Smart::Comments;
 
-our $VERSION = 7;
+our $VERSION = 8;
 
 use constant DELAY_MILLISECONDS => 250;
 
-sub new {
-  my ($class, %self) = @_;
-  my $self = bless \%self, $class;
-
-  my $widget = $self->{'widget'};
-  (Scalar::Util::blessed($widget) && $widget->isa('Gtk2::Widget'))
-    or croak
-      __PACKAGE__.'->new(): \'widget\' parameter must be a Gtk2::Widget';
-
-  Scalar::Util::weaken ($self->{'widget'});
-
-  my $hadj = delete $self->{'hadjustment'};
-  my $vadj = delete $self->{'vadjustment'};
-  ($hadj || $vadj)
-    or carp __PACKAGE__.'->new(): neither hadjustment nor vadjustment supplied, nothing can move';
-
-  $self->{'h'} = { adjustment => $hadj,
-                   inverted   => delete $self->{'hinverted'} };
-  $self->{'v'} = { adjustment => $vadj,
-                   inverted   => delete $self->{'vinverted'} };
-  $self->{'wevents'}
-    = Gtk2::Ex::WidgetEvents->new ($widget, ['button-press-mask',
-                                             'button-motion-mask',
-                                             'button-release-mask']);
-  return $self;
+BEGIN {
+  Glib::Type->register_enum ('Gtk2::Ex::Dragger::UpdatePolicy',
+                             'default',
+                             'continuous',
+                             'delayed',
+                             'discontinuous',
+                            );
 }
 
-sub DESTROY {
+use Glib::Object::Subclass
+  'Glib::Object',
+  properties => [ Glib::ParamSpec->object
+                  ('widget',
+                   'widget',
+                   'The target widget whose contents are to be moved around.  (For a widget inside a Gtk2::ViewPort this property should be the ViewPort.)',
+                   'Gtk2::Widget',
+                   Glib::G_PARAM_READWRITE),
+
+                  Glib::ParamSpec->object
+                  ('hadjustment',
+                   'hadjustment',
+                   'Horizontal adjustment to change, or undef for no horizontal drag.',
+                   'Gtk2::Adjustment',
+                   Glib::G_PARAM_READWRITE),
+                  Glib::ParamSpec->object
+                  ('vadjustment',
+                   'vadjustment',
+                   'Vertical adjustment to change, or undef for no vertical drag.',
+                   'Gtk2::Adjustment',
+                   Glib::G_PARAM_READWRITE),
+
+                  Glib::ParamSpec->boolean
+                  ('hinverted',
+                   'hinverted',
+                   'Whether to invert horizontal movement, for hadjustment valuess increasing to the left (ie. decreasing X coordinate).',
+                   0, # default no
+                   Glib::G_PARAM_READWRITE),
+                  Glib::ParamSpec->boolean
+                  ('vinverted',
+                   'vinverted',
+                   'Whether to invert vertical movement, for vadjustment values increasing up the screen (ie. decreasing Y coordinate).',
+                   0, # default no
+                   Glib::G_PARAM_READWRITE),
+
+                  Glib::ParamSpec->boolean
+                  ('confine',
+                   'confine',
+                   'Confine the mouse pointer to the draggable extent per upper/lower range of the adjustments.',
+                   0, # default no
+                   Glib::G_PARAM_READWRITE),
+
+                  Glib::ParamSpec->enum
+                  ('update-policy',
+                   'update-policy',
+                   'How often to update the hadjustment and vadjustment objects for drag movement.',
+                   'Gtk2::Ex::Dragger::UpdatePolicy',
+                   'default',
+                   Glib::G_PARAM_READWRITE),
+
+                  Glib::ParamSpec->scalar
+                  ('cursor',
+                   'cursor',
+                   'Cursor to show while dragging, as any name or object accepted by Gtk2::Ex::WidgetCursor.',
+                   Glib::G_PARAM_READWRITE),
+
+                  Glib::ParamSpec->string
+                  ('cursor-name',
+                   'cursor-name',
+                   'Cursor to show while dragging, as cursor type enum nick, or "invisible".',
+                   '',  # FIXME: default is undef when gtk2-perl 1.240 allows
+                   Glib::G_PARAM_READWRITE),
+
+                  Glib::ParamSpec->boxed
+                  ('cursor-object',
+                   'cursor-object',
+                   'Cursor to show while dragging, as cursor object.',
+                   'Gtk2::Gdk::Cursor',
+                   Glib::G_PARAM_READWRITE),
+
+                ];
+
+sub INIT_INSTANCE {
+  my ($self) = @_;
+  $self->{'h'} = {};
+  $self->{'v'} = {};
+}
+
+sub FINALIZE_INSTANCE {
   my ($self) = @_;
   $self->stop;
 }
 
+sub GET_PROPERTY {
+  my ($self, $pspec) = @_;
+  ### Dragger GET_PROPERTY(): $pspec->get_name
+  my $pname = $pspec->get_name;
+
+  if ($pname eq 'cursor_name') {
+    my $cursor = $self->{'cursor'};
+    if (Scalar::Util::blessed($cursor)) {
+      $cursor = $cursor->type;
+    }
+    return $cursor;
+  }
+  if ($pname eq 'cursor_object') {
+    my $cursor = $self->{'cursor'};
+    return (Scalar::Util::blessed($cursor)
+            && $cursor->isa('Gtk2::Gdk::Cursor')
+            && $cursor);
+  }
+
+  return $self->{$pname};
+}
+
+sub SET_PROPERTY {
+  my ($self, $pspec, $newval) = @_;
+  ### Dragger SET_PROPERTY(): $pspec->get_name
+  my $pname = $pspec->get_name;
+
+  my $pname_is_cursor = ($pname =~ s/^(cursor).*/$1/);
+  my $oldval = $self->{$pname};
+  $self->{$pname} = $newval;
+
+  if ($pname_is_cursor) {
+    _widget_cursor($self);
+    $self->notify('cursor');
+    $self->notify('cursor-name');
+    $self->notify('cursor-object');
+
+  } elsif ($pname eq 'widget') {
+    my $widget = $newval;
+    if (! $newval
+        || ($oldval && $newval != $oldval)) {
+      # ENHANCE-ME: might be able to switch to an active grab on the new
+      # widget and continue
+      $self->stop;
+    }
+    if ($widget) {
+      Scalar::Util::weaken ($self->{'widget'});
+    }
+    $self->{'wevents'} = $widget && Gtk2::Ex::WidgetEvents->new
+      ($widget, ['button-press-mask',
+                 'button-motion-mask',
+                 'button-release-mask']);
+    _widget_signals($self);
+
+  } elsif ($pname =~ /([hv])(adjustment|inverted)/) {
+    my $axis = $self->{$1};
+    my $field = $2;
+    $axis->{$field} = $newval;
+
+    if ($field eq 'adjustment') {
+      $axis->{'last_value'} = $newval && $newval->value;
+      _axis_signals($self,$axis);
+      _do_adjustment_changed ($newval, \$self);
+    }
+
+  } elsif ($pname eq 'confine') {
+    _resize_confine_win ($self);
+  }
+}
+
+# create or update WidgetCursor according to $self->{'cursor'}
+# doesn't load WidgetCursor until drag active
+sub _widget_cursor {
+  my ($self) = @_;
+  $self->{'wcursor'} = ($self->{'active'}
+                        && $self->{'cursor'}
+                        && do {
+                          require Gtk2::Ex::WidgetCursor;
+                          Gtk2::Ex::WidgetCursor->new
+                              (widget => $self->{'widget'},
+                               cursor => $self->{'cursor'},
+                               active => 1);
+                        });
+}
+
+# update $self->{'h'}->{'adjustment_ids'} or $self->{'v'}->... signal handlers
+# handlers only applied while 'active'
+sub _axis_signals {
+  my ($self, $axis) = @_;
+  my $adj;;
+  $axis->{'adjustment_ids'} =
+    ($self->{'active'}
+     && ($adj = $axis->{'adjustment'})
+     && do {
+       my $ref_weak_self = _ref_weak ($self);
+
+       ### _axis_signals() connect
+       Glib::Ex::SignalIds->new
+           ($adj,
+            $adj->signal_connect (changed => \&_do_adjustment_changed,
+                                  $ref_weak_self),
+            $adj->signal_connect (value_changed => \&_do_adjustment_value_changed,
+                                  $ref_weak_self))
+         });
+}
+
+# make signal handler connections on $self->{'widget'} if active
+sub _widget_signals {
+  my ($self) = @_;
+  my $widget;
+  $self->{'widget_ids'} =
+    ($self->{'active'}
+     && ($widget = $self->{'widget'})
+     && do {
+       my $ref_weak_self = _ref_weak ($self);
+
+       ### _widget_signals() connect
+       Glib::Ex::SignalIds->new
+           ($widget,
+            $widget->signal_connect (motion_notify_event => \&_do_motion_notify,
+                                     $ref_weak_self),
+            $widget->signal_connect (button_release_event => \&_do_button_release,
+                                     $ref_weak_self),
+            $widget->signal_connect (configure_event => \&_do_configure_event,
+                                     $ref_weak_self),
+            $widget->signal_connect (grab_broken_event => \&_do_grab_broken,
+                                     $ref_weak_self))
+         });
+}
+
 sub start {
   my ($self, $event) = @_;
+  ### Dragger start()
 
   # maybe a second start() call could transition to a different button, but
   # for now disallow it
@@ -82,42 +274,18 @@ sub start {
   my $win = $widget->Gtk2_Ex_Dragger_window
     or croak __PACKAGE__.'->start(): widget not realized';
 
-  if (exists $self->{'cursor'}) {
-    require Gtk2::Ex::WidgetCursor;
-    $self->{'wcursor'} = Gtk2::Ex::WidgetCursor->new
-      (widget => $widget,
-       cursor => $self->{'cursor'},
-       active => 1);
-  }
-
-  require Glib::Ex::SignalIds;
-  my $ref_weak_self = _ref_weak ($self);
-  $self->{'widget_ids'} = Glib::Ex::SignalIds->new
-    ($widget,
-     $widget->signal_connect (motion_notify_event => \&_do_motion_notify,
-                              $ref_weak_self),
-     $widget->signal_connect (button_release_event => \&_do_button_release,
-                              $ref_weak_self),
-     $widget->signal_connect (configure_event => \&_do_configure_event,
-                              $ref_weak_self),
-     $widget->signal_connect (grab_broken_event => \&_do_grab_broken,
-                              $ref_weak_self));
+  $self->{'active'} = 1;
+  _widget_cursor($self);
+  _widget_signals($self);
 
   foreach my $axis ($self->{'h'}, $self->{'v'}) {
     my $adj = $axis->{'adjustment'} or next;
     $axis->{'unapplied'} = 0;
     $axis->{'pending'} = 0;
     $axis->{'last_value'} = $adj->value;
-
-    $axis->{'adjustment_ids'} = Glib::Ex::SignalIds->new
-      ($adj,
-       $adj->signal_connect (changed => \&_do_adjustment_changed,
-                             $ref_weak_self),
-       $adj->signal_connect (value_changed => \&_do_adjustment_value_changed,
-                             $ref_weak_self));
+    _axis_signals ($self, $axis);
   }
 
-  $self->{'active'} = 1;
   $self->{'button'} = $event->button;
   ($self->{'h'}->{'last_pixel'}, $self->{'v'}->{'last_pixel'})
     = $event->get_root_coords;
@@ -255,7 +423,7 @@ sub _do_configure_event {
   return Gtk2::EVENT_PROPAGATE;
 }
 
-# 'changed' signal on either of the adjustments
+# 'changed' signal on either hadjustment or vadjustment
 sub _do_adjustment_changed {
   my ($adj, $ref_weak_self) = @_;
   my $self = $$ref_weak_self || return;
@@ -266,7 +434,7 @@ sub _do_adjustment_changed {
   _resize_confine_win ($self);
 }
 
-# 'value-changed' signal on both hadjustment and vadjustment
+# 'value-changed' signal on either hadjustment or vadjustment
 #
 # If the value we see is what we set then no action.  If it's something
 # different then it's a change made by the keyboard or something else
@@ -297,7 +465,7 @@ sub _do_adjustment_value_changed {
 
 sub _resize_confine_win {
   my ($self) = @_;
-  if (! $self->{'confine'}) { return; }
+  my $confine_win = $self->{'confine_win'} || return;
 
   my $widget = $self->{'widget'};
   my $win = $widget->Gtk2_Ex_Dragger_window;
@@ -394,8 +562,8 @@ sub _resize_confine_win {
   $confine_height = min ($confine_height, $root_height - $confine_y);
 
   ### confine to: "$confine_x,$confine_y   ${confine_width}x${confine_height}"
-  $self->{'confine_win'}->move_resize ($confine_x, $confine_y,
-                                       $confine_width, $confine_height);
+  $confine_win->move_resize ($confine_x, $confine_y,
+                             $confine_width, $confine_height);
 }
 
 # 'motion-notify-event' on widget, and also called for button release.
@@ -631,14 +799,19 @@ sub Gtk2::TextView::Gtk2_Ex_Dragger_window {
   = \&Gtk2::TreeView::get_bin_window;
 
 # For Viewport there's $widget->window then within that a "view_window"
-# which is smaller by the border size.  The view_window is the scrollable
+# which is smaller by the border size.  This view_window is the scrollable
 # part we're interested in, but it's not a documented feature, so this is a
 # nasty hack to pick it out.
 #
+# The $viewport->get_bin_window is a sub-window of the view_window.  It
+# contains the viewport children.  (In the gtk manual in gtk 2.20 but not
+# explained as such.)
+#
 sub Gtk2::Viewport::Gtk2_Ex_Dragger_window {
   my ($viewport) = @_;
-  my $win = $viewport->window || return undef; # if unrealized
-  return ($win->get_children)[0];
+  my $win;
+  return (($win = $viewport->window) # if realized
+          && ($win->get_children)[0]);
 }
 
 
@@ -749,9 +922,9 @@ The dragger doesn't itself have a button press handler (at present), rather
 an application is expected to start the drag for some button/modifier
 combination.  The dragger adds the press mask in readiness for that.
 
-If you want defer dragger creation until actually needed in a button press
-then you must explicitly select the motion and release events beforehand.
-For example,
+If you want to defer dragger creation until actually needed in a button
+press then you must explicitly select the motion and release events
+beforehand.  For example,
 
     # events selected beforehand
     $widget->add_events (['button-press-mask',
@@ -771,9 +944,9 @@ For example,
 The motion and release masks beforehand are important if the application is
 lagged.  It's possible the user has already released when the application
 receives the press.  If the release mask wasn't already on then the release
-event would not be generated.  If you forget those masks then currently the
-dragger ends up turned on but then doesn't work and won't turn off (either
-all the time, or when lagged, or the first use through).
+event is not generated.  If you forget those masks then currently the
+dragger turns on but then doesn't work and won't turn off (either all the
+time, or when lagged, or the first use).
 
 =head1 FUNCTIONS
 
@@ -800,7 +973,7 @@ The C<hinverted> or C<vinverted> flags swap the direction the adjustments
 are moved.  Normally C<hadjustment> increases to the left and C<vadjustment>
 increases upwards.  Inverting goes instead to the right or downwards.  This
 is the same sense as inverted on C<Gtk2::Scrollbar>, so if you set
-C<inverted> on a scrollbar then do the same to the dragger.
+C<inverted> on the scrollbar then do the same to the dragger.
 
 C<cursor> is any cursor name or object accepted by the WidgetCursor
 mechanism (see L<Gtk2::Ex::WidgetCursor>).  If unset or C<undef> (the
@@ -824,6 +997,62 @@ timestamp can be used.  This matters when the dragger uses an active grab.
 If application event processing is a bit lagged the timestamp ensures the
 ungrab doesn't kill a later passive grab on a button press or an explicit
 grab by another client.
+
+=back
+
+=head1 PROPERTIES
+
+=over
+
+=item C<widget> (C<Gtk2::Widget>, default undef)
+
+The widget whose contents are to be dragged around.
+
+Currently if C<widget> is changed while a drag is in progress then the drag
+is stopped.  In the future it may be possible to switch, though doing so
+would be a bit unusual.
+
+=item C<hadjustment> (C<Gtk2::Adjustment> object, default undef)
+
+=item C<vadjustment> (C<Gtk2::Adjustment> object, default undef)
+
+The adjustment objects representing the current position and range of
+movement in the respective directions.  Nothing will move until at least one
+of these two is set.
+
+=item C<hinverted> (boolean, default false)
+
+=item C<vinverted> (boolean, default false)
+
+Swap the direction the respective adjustments are moved.  Normally
+C<hadjustment> increases to the left and C<vadjustment> increases upwards.
+Inverting goes instead to the right or downwards.  These are the same way
+around as the C<Gtk2::Scrollbar> C<inverted> property so if you set
+C<inverted> on the scrollbar then do the same to the dragger.
+
+=item C<cursor> (scalar, default undef)
+
+=item C<cursor-name> (string, cursor enum nick or "invisible", default undef)
+
+=item C<cursor-object> (C<Gtk2::Gdk::Cursor>, default undef)
+
+C<cursor> is any cursor name or object accepted by the WidgetCursor
+mechanism (see L<Gtk2::Ex::WidgetCursor>).  If unset or C<undef> (the
+default) then the cursor is unchanged and you don't need WidgetCursor
+installed in that case.
+
+The C<cursor-name> and C<cursor-object> properties access the same
+underlying C<cursor> setting but with respective string or cursor object
+type.  They can be used from a C<Gtk2::Builder> specification.
+
+=item C<confine> (boolean, default false)
+
+Whether to confine the user's mouse movement to the screen area
+corresponding to the adjustment upper/lower ranges.
+
+=item C<update-policy> (UpdatePolicy enum, default "sync")
+
+See L</UPDATE POLICY> above.
 
 =back
 
@@ -888,11 +1117,15 @@ Viewport for those without their own understanding.
 
 =head1 OTHER NOTES
 
-Some good choices for the C<cursor> while dragging are a C<fleur> 4-way
-arrow, or C<double-arrow> or C<sb-h-double-arrow> for horizontal 2-way, and
-C<sb-v-double-arrow> for vertical 2-way.  There's not much in the standard
-cursors for a grasping hand so you probably have to make something like that
-from a pixmap.
+Some good choices for the C<cursor> while dragging are
+
+    fleur                4-way arrow
+    double-arrow         horizontal 2-way
+    sb-h-double-arrow    horizontal 2-way
+    sb-v-double-arrow    vertical 2-way
+
+There's not much in the standard cursors for a grasping hand so you probably
+have to make something like that from a pixmap.
 
 Currently only a weak reference is kept to the target widget, so the fact
 there's a dragger feature doesn't keep it alive forever.  This means in
@@ -902,20 +1135,22 @@ the adjustment objects since they probably should stay alive as long as the
 widget and dragger do.  But perhaps this will change.
 
 Having the C<button-motion-mask> and C<button-release-mask> set before the
-drag won't normally cost very many extra events.  It'd be possible for the
-dragger to turn on the motion mask on starting (with an active grab), if not
-already on, and C<< $display->get_pointer >> to check for any movement it
-might have missed.  For now that doesn't seem worthwhile.
+drag won't normally cost very many extra events.
 
 A missed release event can't be properly handled after the fact.
 A C<get_pointer> can say whether the button is now down, but it may be the
 user pressing elsewhere, and the x,y position of the drag release has been
 completely lost.  That final release position is quite important.  If the
-application is lagged you still want a press, drag, release to move the
-widget contents by that distance moved.  It's wrong and quite annoying if
-the contents jump to where the mouse has gone after release.  (The
-scrollbars in some versions of mozilla for instance got that sort of thing
-wrong.)
+application is lagged you still want press/drag/release to move the widget
+contents by the corresponding distance.  It's wrong and quite annoying if
+the contents jump to where the mouse has gone after release.  The scrollbars
+in some versions of mozilla for instance do that wrongly.
+
+It'd be possible for the dragger to turn on C<button-motion-mask> when
+starting the drag, if not already on, using an active grab and a
+C<< $display->get_pointer >> to check for any missed movement.  But for now
+that doesn't seem worthwhile, not while the release mask can't be similarly
+adapted.
 
 =head1 SEE ALSO
 

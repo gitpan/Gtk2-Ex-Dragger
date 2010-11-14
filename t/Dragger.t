@@ -28,7 +28,7 @@ BEGIN { MyTestHelpers::nowarnings(); }
 
 require Gtk2::Ex::Dragger;
 
-my $want_version = 7;
+my $want_version = 8;
 {
   is ($Gtk2::Ex::Dragger::VERSION, $want_version, 'VERSION variable');
   is (Gtk2::Ex::Dragger->VERSION,  $want_version, 'VERSION class method');

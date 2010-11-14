@@ -37,6 +37,8 @@ MyMakeMakerExtras::WriteMakefile
                     # version 1.220 for Glib::SOURCE_REMOVE and various
                     # bug fixes
                     'Glib' => '1.220',
+                    'Glib::Object::Subclass' => 0,
+
                     # my Glib-Ex-ObjectBits
                     'Glib::Ex::SignalIds' => 0,
 

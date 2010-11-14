@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Gtk2-Ex-Dragger
-version:            7
+version:            8
 abstract:           Mouse drag to move widget contents.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -13,6 +13,7 @@ build_requires:
 requires:
     Glib:                 1.220
     Glib::Ex::SignalIds:  0
+    Glib::Object::Subclass:  0
     Gtk2:                 1.220
     Gtk2::Ex::SyncCall:   3
     Gtk2::Ex::WidgetEvents:  21

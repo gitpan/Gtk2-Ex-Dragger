@@ -9,6 +9,8 @@ debian/source/format
 debian/watch
 devel/layout.pl
 devel/run.pl
+devel/viewport.pl
+examples/builder.pl
 examples/busy.pl
 examples/heart.pl
 examples/label.pl
