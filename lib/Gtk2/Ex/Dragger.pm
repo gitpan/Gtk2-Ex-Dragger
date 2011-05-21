@@ -1,4 +1,4 @@
-# Copyright 2007, 2008, 2009, 2010 Kevin Ryde
+# Copyright 2007, 2008, 2009, 2010, 2011 Kevin Ryde
 
 # This file is part of Gtk2-Ex-Dragger.
 #
@@ -32,7 +32,7 @@ use Gtk2::Ex::WidgetEvents;
 # uncomment this to run the ### lines
 #use Smart::Comments;
 
-our $VERSION = 8;
+our $VERSION = 9;
 
 use constant DELAY_MILLISECONDS => 250;
 
@@ -49,47 +49,59 @@ use Glib::Object::Subclass
   'Glib::Object',
   properties => [ Glib::ParamSpec->object
                   ('widget',
-                   'widget',
+                   'Target widget',
                    'The target widget whose contents are to be moved around.  (For a widget inside a Gtk2::ViewPort this property should be the ViewPort.)',
                    'Gtk2::Widget',
                    Glib::G_PARAM_READWRITE),
 
                   Glib::ParamSpec->object
                   ('hadjustment',
-                   'hadjustment',
+                   (do {
+                     my $str = 'Horizontal adjustment';
+                     # translation if available
+                     eval { require Locale::Messages;
+                            Locale::Messages::dgettext('gtk20-properties',$str)
+                            } || $str }),
                    'Horizontal adjustment to change, or undef for no horizontal drag.',
                    'Gtk2::Adjustment',
                    Glib::G_PARAM_READWRITE),
+
                   Glib::ParamSpec->object
                   ('vadjustment',
-                   'vadjustment',
+                   (do {
+                     my $str = 'Vertical adjustment';
+                     # translation if available
+                     eval { require Locale::Messages;
+                            Locale::Messages::dgettext('gtk20-properties',$str)
+                            } || $str }),
                    'Vertical adjustment to change, or undef for no vertical drag.',
                    'Gtk2::Adjustment',
                    Glib::G_PARAM_READWRITE),
 
                   Glib::ParamSpec->boolean
                   ('hinverted',
-                   'hinverted',
+                   'Horizontal inverted',
                    'Whether to invert horizontal movement, for hadjustment valuess increasing to the left (ie. decreasing X coordinate).',
                    0, # default no
                    Glib::G_PARAM_READWRITE),
+
                   Glib::ParamSpec->boolean
                   ('vinverted',
-                   'vinverted',
+                   'Vertical inverted',
                    'Whether to invert vertical movement, for vadjustment values increasing up the screen (ie. decreasing Y coordinate).',
                    0, # default no
                    Glib::G_PARAM_READWRITE),
 
                   Glib::ParamSpec->boolean
                   ('confine',
-                   'confine',
+                   'Confine pointer',
                    'Confine the mouse pointer to the draggable extent per upper/lower range of the adjustments.',
                    0, # default no
                    Glib::G_PARAM_READWRITE),
 
                   Glib::ParamSpec->enum
                   ('update-policy',
-                   'update-policy',
+                   'Update policy',
                    'How often to update the hadjustment and vadjustment objects for drag movement.',
                    'Gtk2::Ex::Dragger::UpdatePolicy',
                    'default',
@@ -97,20 +109,22 @@ use Glib::Object::Subclass
 
                   Glib::ParamSpec->scalar
                   ('cursor',
-                   'cursor',
+                   'Cursor',
                    'Cursor to show while dragging, as any name or object accepted by Gtk2::Ex::WidgetCursor.',
                    Glib::G_PARAM_READWRITE),
 
                   Glib::ParamSpec->string
                   ('cursor-name',
-                   'cursor-name',
+                   'Cursor name',
                    'Cursor to show while dragging, as cursor type enum nick, or "invisible".',
-                   '',  # FIXME: default is undef when gtk2-perl 1.240 allows
+                   (eval {Glib->VERSION(1.240);1}
+                    ? undef # default
+                    : ''),  # no undef/NULL before Perl-Glib 1.240
                    Glib::G_PARAM_READWRITE),
 
                   Glib::ParamSpec->boxed
                   ('cursor-object',
-                   'cursor-object',
+                   'Cursor object',
                    'Cursor to show while dragging, as cursor object.',
                    'Gtk2::Gdk::Cursor',
                    Glib::G_PARAM_READWRITE),
@@ -130,13 +144,17 @@ sub FINALIZE_INSTANCE {
 
 sub GET_PROPERTY {
   my ($self, $pspec) = @_;
-  ### Dragger GET_PROPERTY(): $pspec->get_name
   my $pname = $pspec->get_name;
+  ### Dragger GET_PROPERTY(): $pname
 
   if ($pname eq 'cursor_name') {
     my $cursor = $self->{'cursor'};
     if (Scalar::Util::blessed($cursor)) {
       $cursor = $cursor->type;
+      # think prefer undef over cursor-is-pixmap for the get()
+      if ($cursor eq 'cursor-is-pixmap') {
+        undef $cursor;
+      }
     }
     return $cursor;
   }
@@ -160,6 +178,12 @@ sub SET_PROPERTY {
   $self->{$pname} = $newval;
 
   if ($pname_is_cursor) {
+    # copy boxed GdkCursor in case the caller frees it, and in particular
+    # for $pname eq 'cursor_object' it might be freed immediately by the
+    # GValue call-out stuff
+    # if (blessed($newval) && $newval->isa('Gtk2::Gdk::Cursor')) {
+    #   $self->{$pname} = $newval->copy;
+    # }
     _widget_cursor($self);
     $self->notify('cursor');
     $self->notify('cursor-name');
@@ -217,7 +241,7 @@ sub _widget_cursor {
 # handlers only applied while 'active'
 sub _axis_signals {
   my ($self, $axis) = @_;
-  my $adj;;
+  my $adj;
   $axis->{'adjustment_ids'} =
     ($self->{'active'}
      && ($adj = $axis->{'adjustment'})
@@ -631,8 +655,9 @@ sub _set_value {
 
   my $page_size = $adj->page_size;
   my $value_per_pixel = $page_size / $win_size;
+  my $old_value = $adj->value;
   my $new_value
-    = $adj->value + $axis->{'unapplied'} - $delta_pixel * $value_per_pixel;
+    = $old_value + $axis->{'unapplied'} - $delta_pixel * $value_per_pixel;
   my $unapplied = 0;
 
   my $lower = $adj->lower;
@@ -649,8 +674,13 @@ sub _set_value {
 
   ### set value: $new_value
   $adj->value ($new_value);
-  $axis->{'last_value'} = $adj->value; # refetch for float rounding
-  ### rounded to float: $axis->{'last_value'}
+  $new_value = $axis->{'last_value'} = $adj->value; # refetch in case rounding
+  ### rounded from NV: $new_value
+  if ($old_value == $new_value) {
+    ### unchanged, no signals
+    return;
+  }
+
   $adj->notify ('value');
 
   my $update_policy = $self->{'update_policy'} || 'default';
@@ -841,7 +871,7 @@ sub _ref_weak {
 1;
 __END__
 
-=for stopwords Gtk2-Ex-Dragger Dragger scrollbars WidgetCursor natively viewport dragger scrollbar timestamp Gdk ungrab Viewport TextView pixmap Ryde
+=for stopwords Gtk2-Ex-Dragger Dragger scrollbars WidgetCursor natively viewport dragger scrollbar timestamp Gdk ungrab Viewport TextView pixmap Ryde WidgetEvents boolean enum UpdatePolicy mozilla
 
 =head1 NAME
 
@@ -1004,7 +1034,7 @@ grab by another client.
 
 =over
 
-=item C<widget> (C<Gtk2::Widget>, default undef)
+=item C<widget> (C<Gtk2::Widget>, default C<undef>)
 
 The widget whose contents are to be dragged around.
 
@@ -1012,9 +1042,9 @@ Currently if C<widget> is changed while a drag is in progress then the drag
 is stopped.  In the future it may be possible to switch, though doing so
 would be a bit unusual.
 
-=item C<hadjustment> (C<Gtk2::Adjustment> object, default undef)
+=item C<hadjustment> (C<Gtk2::Adjustment> object, default C<undef>)
 
-=item C<vadjustment> (C<Gtk2::Adjustment> object, default undef)
+=item C<vadjustment> (C<Gtk2::Adjustment> object, default C<undef>)
 
 The adjustment objects representing the current position and range of
 movement in the respective directions.  Nothing will move until at least one
@@ -1030,11 +1060,11 @@ Inverting goes instead to the right or downwards.  These are the same way
 around as the C<Gtk2::Scrollbar> C<inverted> property so if you set
 C<inverted> on the scrollbar then do the same to the dragger.
 
-=item C<cursor> (scalar, default undef)
+=item C<cursor> (scalar, default C<undef>)
 
-=item C<cursor-name> (string, cursor enum nick or "invisible", default undef)
+=item C<cursor-name> (string, cursor enum nick or "invisible", default C<undef>)
 
-=item C<cursor-object> (C<Gtk2::Gdk::Cursor>, default undef)
+=item C<cursor-object> (C<Gtk2::Gdk::Cursor>, default C<undef>)
 
 C<cursor> is any cursor name or object accepted by the WidgetCursor
 mechanism (see L<Gtk2::Ex::WidgetCursor>).  If unset or C<undef> (the
@@ -1163,7 +1193,7 @@ L<http://user42.tuxfamily.org/gtk2-ex-dragger/index.html>
 
 =head1 LICENSE
 
-Copyright 2007, 2008, 2009, 2010 Kevin Ryde
+Copyright 2007, 2008, 2009, 2010, 2011 Kevin Ryde
 
 Gtk2-Ex-Dragger is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the Free

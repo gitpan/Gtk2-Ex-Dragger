@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2008, 2010 Kevin Ryde
+# Copyright 2008, 2010, 2011 Kevin Ryde
 
 # This file is part of Gtk2-Ex-Dragger.
 #
@@ -27,6 +27,7 @@
 # feedback.
 #
 
+use 5.008;
 use strict;
 use warnings;
 use Gtk2 1.220 '-init';

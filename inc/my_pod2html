@@ -2,7 +2,7 @@
 
 # my_pod2html -- convert POD to HTML, with some mangling
 
-# Copyright 2009, 2010 Kevin Ryde
+# Copyright 2009, 2010, 2011 Kevin Ryde
 
 # my_pod2html is shared by several distributions.
 #
@@ -47,7 +47,7 @@ my %table =
    'apt-cache'    => 'http://packages.debian.org/apt',
    'apt-rdepends' => 'http://packages.debian.org/apt-rdepends',
    'gtk-options'  => 'http://manpages.ubuntu.com/manpages/jaunty/man7/gtk-options.7.html',
-   'xsetroot'     => 'http://www.x.org/archive/X11R7.5/doc/man/man1/xsetroot.1.html',
+   'xsetroot'     => 'http://www.x.org/archive/X1'.'1R7.5/doc/man/man1/xsetroot.1.html',
    'leafnode'     => 'http://leafnode.sourceforge.net',
    'lynx'         => 'http://lynx.isc.org/',
    'feed2imap'    => 'http://home.gna.org/feed2imap',

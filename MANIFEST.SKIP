@@ -2,7 +2,7 @@
 
 # MANIFEST.SKIP -- my various excluded files
 
-# Copyright 2008, 2009, 2010 Kevin Ryde
+# Copyright 2008, 2009, 2010, 2011 Kevin Ryde
 
 # This file is shared among several distributions.
 #
@@ -94,6 +94,8 @@
 ^diff\.tmp
 # inc/MyMakefileExtras.pm "lintian-source"
 ^temp-lintian
+# some of my im module testing
+^tempfile\.png$
 
 
 # my dists
@@ -101,9 +103,11 @@
 ^up$
 ^c$
 
-# special case pulp test build stuff
+# special case p..ulp test build stuff
 devel/h2xs/TestConstFoo/
 
+# special case various executables
+^devel/exe-[^/.]+$
 # special case mall executables
 ^devel/hblk$
 ^devel/mallopt$
@@ -122,7 +126,10 @@ devel/h2xs/TestConstFoo/
 ^devel/misc$
 # special case m-i executables
 ^devel/gen-bits$
-
+# special case combo executables
+^devel/toolbutton-overflow-leak$
+# special case xpother executables
+^devel/screensaver-info$
 
 # special htmlext environs
 ^test-dist/

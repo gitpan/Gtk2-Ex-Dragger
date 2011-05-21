@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2008, 2010 Kevin Ryde
+# Copyright 2008, 2010, 2011 Kevin Ryde
 
 # This file is part of Gtk2-Ex-Dragger.
 #
@@ -87,6 +87,17 @@ $area->add_events (['button-press-mask',
 #                        });
 
 my $vadj = Gtk2::Adjustment->new (100, 0, 300, 1, 10, 100);
+$vadj->signal_connect
+  (notify => sub {
+     my ($vadj, $pspec) = @_;
+     my $pname = $pspec->get_name;
+     print "$progname: vadj notify \"$pname\", value now ",$vadj->value,"\n";
+   });
+$vadj->signal_connect
+  (value_changed => sub {
+     my ($vadj, $pspec) = @_;
+     print "$progname: vadj value-changed, value now ",$vadj->value,"\n";
+   });
 my $vscroll = Gtk2::VScrollBar->new ($vadj);
 $table->attach ($vscroll, 1,2, 0,1,
                 [],['expand','shrink','fill'], 0,0);
@@ -209,35 +220,35 @@ my $sleep = 0;
 Up,Down,Left,Right,
 PgUp, PgDown');
   $vbox->pack_start ($label, 0,0,0);
-  
+
   $area->signal_connect
     (key_press_event => sub {
        my ($area, $event) = @_;
        if ($event->keyval == Gtk2::Gdk->keyval_from_name('Page_Down')) {
          $vadj->set_value (min ($vadj->upper - $vadj->page_size,
                                 $vadj->value + $vadj->page_increment));
-         
+
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Page_Up')) {
          $vadj->set_value (max ($vadj->lower,
                                 $vadj->value - $vadj->page_increment));
-         
+
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Down')) {
          $vadj->set_value (min ($vadj->upper - $vadj->page_size,
                                 $vadj->value + $vadj->step_increment));
-         
+
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Up')) {
          $vadj->set_value (max ($vadj->lower,
                                 $vadj->value - $vadj->step_increment));
-         
-         
+
+
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Left')) {
          $hadj->set_value (min ($hadj->upper - $hadj->page_size,
                                 $hadj->value + $hadj->step_increment));
-         
+
        } elsif ($event->keyval == Gtk2::Gdk->keyval_from_name('Right')) {
          $hadj->set_value (max ($hadj->lower,
                                 $hadj->value - $hadj->step_increment));
-         
+
        }
        return 0; # propagate
      });

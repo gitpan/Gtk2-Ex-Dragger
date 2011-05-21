@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.66.
+signed via the Module::Signature module, version 0.68.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -15,43 +15,46 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 842745cb706f8f2126506f544492f7a80dbe29b3 COPYING
-SHA1 d85bfcba4896e3ec23b9e2c996f2f0d3a98e0dd4 Changes
-SHA1 81f1997d33873bef8c0454596ec49df1391b7db7 MANIFEST
-SHA1 e6e7c2904ea5d300c0ddf70fc5a80f5005229aa9 MANIFEST.SKIP
-SHA1 585183eec09d07d4f507eebbb9f17246913fb460 META.yml
-SHA1 dda95df9f142bf30fa1fe00125495b26fa35ab05 Makefile.PL
+SHA1 407c1afd260b9589ea567c945ae42480df873522 Changes
+SHA1 a7deb96b7ac9d9810cc35bf21b1f02a8e9c1ac41 MANIFEST
+SHA1 d6f9595a0ae02220d6781c9460782ae32c0d4aaf MANIFEST.SKIP
+SHA1 103212eb811947ac88eae6517dccaa9ef65f59b2 META.yml
+SHA1 7091e2e0cab85d189bde766a8afd48c85d25460b Makefile.PL
 SHA1 2ad08241d1415a0d19c99041da564088609e45b8 README
-SHA1 2cc2fa88457befcc7814493ac2372deb7d4c0f5e debian/changelog
+SHA1 6681479c72e13f9c66832ab645088f01aa426890 debian/changelog
 SHA1 ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 debian/compat
-SHA1 009b3c85efe3c991abd3d3df2b471407ccfc1e52 debian/control
-SHA1 155f1ba9789ab03a9dfb0b01bdff8fea2751674d debian/copyright
+SHA1 b1b3f9033d00ff62a1e1dd328aba561f6323feb1 debian/control
+SHA1 7e3c225fa4a2bb99af4611126181a1e4a690a73b debian/copyright
 SHA1 a900deb0f6cdbdd62a2899a36accd06fd63d2e58 debian/rules
 SHA1 61652cd1568dcf2614df833eba241755eee34e89 debian/source/format
 SHA1 1b06fb6650633b109153ad4148d11a48a5713a93 debian/watch
-SHA1 3d6b2a2d92cf36f8b4eddc66965404773abdd6d2 devel/layout.pl
-SHA1 426c59bcb73e069a42097ca9209a3e9f9d3cf71c devel/run.pl
-SHA1 3cb258b573d3bf36f61ff48cd32b1b4887863605 devel/viewport.pl
-SHA1 c7f32394c27f1046baba6daefd1a7ab1dc632be8 examples/builder.pl
-SHA1 fd6234724bb48aed8ed670fd043b6326168be056 examples/busy.pl
-SHA1 491d2a08c2fc3c35366c2fed33152a2739e8b024 examples/heart.pl
-SHA1 fb2ecd859c53ec6cbdf6bc24df162abb312848e4 examples/label.pl
-SHA1 40edf9c2dc4f9669111dabfec661349a941cdd19 examples/layout.pl
+SHA1 4738eeff5e687e32760e1b618bdd04bfdf4b2b0a devel/layout.pl
+SHA1 5cd5627de3dda79eefab1abb11bb426d51b45a2c devel/run.pl
+SHA1 9db026ec35c7d96f61cc9f778ac4176c6271077a devel/viewport.pl
+SHA1 754b5934e35128d94cbf2854ed85998a81f221dc examples/builder-internal.pl
+SHA1 ac1d6b9151286c7efe7208f6d64774eb435174d1 examples/builder.pl
+SHA1 82c5374ba0df21b4422d56d9c3a3ac436e77f317 examples/busy.pl
+SHA1 1c43b33bbea4f434bede35164a19ba6ef1dadca2 examples/heart.pl
+SHA1 399db15843931eac5bf628730f472ca766703f6c examples/label.pl
+SHA1 049d073f5661a47cad8376f116e4839f93704fd1 examples/layout.pl
 SHA1 1c4fd7b7819af1ca2bc2fb71470b26b355c677ba examples/textview.pl
-SHA1 7a6615f2f00fb63290e891f171a109a803fd759b examples/vruler.pl
-SHA1 4fb53efe76b3b2264eaa4cf7780cb0c4923e18a5 inc/MyMakeMakerExtras.pm
-SHA1 692a1ddc2ca6b98cac7b48ea40bc1ac1509e8ed9 inc/my_pod2html
-SHA1 8d2a389afc706c69328e41032e6ce7ee240a084b lib/Gtk2/Ex/Dragger.pm
-SHA1 78a3665dfbc77e74f5ffe2c749bade8ad0dd1e27 t/Dragger.t
-SHA1 5e5680b471811244fe93571efc23e7b6089cac3b t/MyTestHelpers.pm
-SHA1 9127f78a0dfa04976acbb979dd7862ef59a74c58 xt/0-META-read.t
-SHA1 37abd43b41068804ea4bb099fdd89af21be82926 xt/0-Test-DistManifest.t
-SHA1 8f93fb4c8f0424a4442cc93c9a2e86342ef55281 xt/0-Test-Pod.t
-SHA1 1de8f07883f6bf1a2ef79f2cb8adf1deb3f61cee xt/0-Test-Synopsis.t
-SHA1 fb517c2fae5ddac559318bf6a224949115ea3129 xt/0-Test-YAML-Meta.t
+SHA1 fc0e94aa155747d0f7bb98c80df04fb4ab458dd2 examples/vruler.pl
+SHA1 7aa92b5074cf12916763acbfc1c440575679a07e inc/MyMakeMakerExtras.pm
+SHA1 7a988b2aa7ed09f1cb9029a1ef3f0e2139dca0cf inc/my_pod2html
+SHA1 cbf05b2be224affe72d50d0cca8afdb443d4abc5 lib/Gtk2/Ex/Dragger.pm
+SHA1 ddddaaf0a22d09d90dd2e241dc80a9526381f988 t/Dragger.t
+SHA1 c403f69bce1a210d3e150de65a26d06320ef8a43 t/MyTestHelpers.pm
+SHA1 0279c9310ec528d10a2a14e602bf98f1c776cce1 xt/0-META-read.t
+SHA1 219395eb91b03829e6f14db4ebd57d88ea972e61 xt/0-Test-ConsistentVersion.t
+SHA1 8a5e0f34131de34e584fbb1939c191a152566155 xt/0-Test-DistManifest.t
+SHA1 cc04a5fe5d8b8b38bfd56453d5d2686c8ea58783 xt/0-Test-Pod.t
+SHA1 8cc52e23427a82cfef5802bf512b13c65de2687a xt/0-Test-Synopsis.t
+SHA1 4c14845872d6eb4280e12f862d6ba2c343358c60 xt/0-Test-YAML-Meta.t
+SHA1 439687ac1489fcb62c3cf200fedf9ebf210e7bf7 xt/0-no-debug-left-on.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iD8DBQFM3zGdLFMCIV9q3ToRAvx0AKCgRQu6BDKHzNtSoXrgEgucoUq+UQCeLGo3
-R2Hp1xVduiRoKoH62u2TYGo=
-=g/MT
+iD8DBQFN2EftLFMCIV9q3ToRAlHdAJ9PJ1nrjIiQhrDhe1F4rJVu9/v37QCePaNp
+egOc2HNFg8sSBd2srk5SlMc=
+=NUKR
 -----END PGP SIGNATURE-----

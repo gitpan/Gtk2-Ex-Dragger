@@ -2,7 +2,7 @@
 
 # 0-META-read.t -- check META.yml can be read by various YAML modules
 
-# Copyright 2009, 2010 Kevin Ryde
+# Copyright 2009, 2010, 2011 Kevin Ryde
 
 # 0-META-read.t is shared among several distributions.
 #
@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this file.  If not, see <http://www.gnu.org/licenses/>.
 
+use 5.006;
 use strict;
 use warnings;
 use Test::More;

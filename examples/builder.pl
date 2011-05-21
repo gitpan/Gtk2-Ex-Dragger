@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Gtk2-Ex-Dragger.
 #
@@ -16,6 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
+
 
 # Usage: ./builder.pl
 #
@@ -35,17 +36,15 @@
 # the builder offer a way to pick out those property values to set into
 # another object like the dragger?  For now the suggestion is to create your
 # own toplevel adjustment objects and set them into the viewer and the
-# dragger.
-#
-# See builder-add.pl for adding multiple widgets to a WidgetCursor.
+# dragger.  See builder-internal.pl for an example of a class offering its
+# adjustments as "internal-child" objects.
 
+use 5.008;
 use strict;
 use warnings;
+use Gtk2 1.220;
 use Gtk2 '-init';
 use Gtk2::Ex::Dragger;
-
-# uncomment this to run the ### lines
-use Smart::Comments;
 
 my $builder = Gtk2::Builder->new;
 $builder->add_from_string (<<"HERE");

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright 2007, 2008, 2009, 2010 Kevin Ryde
+# Copyright 2007, 2008, 2009, 2010, 2011 Kevin Ryde
 
 # This file is part of Gtk2-Ex-Dragger.
 #
@@ -47,24 +47,27 @@ MyMakeMakerExtras::WriteMakefile
                     'Gtk2' => '1.220',
 
                     # my Gtk2-Ex-WidgetBits
-                    'Gtk2::Ex::SyncCall'     => 3,  # new in version 3
+                    'Gtk2::Ex::SyncCall' => 12, # v.12 workaround gtk 2.12 bug
                     'Gtk2::Ex::WidgetEvents' => 21, # new in version 21
                    },
 
-   META_MERGE
-   => { resources
-        => { homepage => 'http://user42.tuxfamily.org/gtk2-ex-dragger/index.html' },
-        optional_features
-        => { cursor
-             => { description => 'Setting a different mouse cursor while dragging.',
-                  requires => { 'Gtk2::Ex::WidgetCursor' => 0 },
-                },
-
-             maximum_examples
-             => { description => 'Be able to run all the example programs.',
-                  requires => { 'Gtk2::Ex::WidgetCursor'  => 0,
-                              },
-                },
-           },
-      },
+   META_MERGE =>
+   { resources =>
+     { homepage => 'http://user42.tuxfamily.org/gtk2-ex-dragger/index.html' },
+     optional_features =>
+     { cursor =>
+       { description => 'Setting a different mouse cursor while dragging.',
+         requires => { 'Gtk2::Ex::WidgetCursor' => 0 },
+       },
+       maximum_examples =>
+       { description => 'Be able to run all the example programs.',
+         requires => { 'Gtk2::Ex::WidgetCursor'  => 0,
+                     },
+       },
+       maximum_interoperation =>
+       { description => 'Have maximum inter-operation with other modules (optional other stuff).',
+         requires => { 'Locale::Messages' => 0 },
+       },
+     },
+   },
   );

@@ -1,4 +1,4 @@
-Copyright 2008, 2010 Kevin Ryde
+Copyright 2008, 2010, 2011 Kevin Ryde
 
 This file is part of Gtk2-Ex-Dragger.
 
@@ -15,6 +15,10 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
+
+
+Version 9, May 2011
+    - no value-changed/notify signals when unchanged at limit of adjustment
 
 Version 8, November 2010
     - an actual Glib::Object so can make from Gtk2::Builder
