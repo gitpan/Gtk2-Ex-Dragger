@@ -38,7 +38,7 @@ MyTestHelpers::glib_gtk_versions();
 #------------------------------------------------------------------------------
 # VERSION
 
-my $want_version = 9;
+my $want_version = 10;
 {
   is ($Gtk2::Ex::Dragger::VERSION, $want_version, 'VERSION variable');
   is (Gtk2::Ex::Dragger->VERSION,  $want_version, 'VERSION class method');

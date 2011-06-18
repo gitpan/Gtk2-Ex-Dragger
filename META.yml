@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Gtk2-Ex-Dragger
-version:            9
+version:            10
 abstract:           Mouse drag to move widget contents.
 author:
     - Kevin Ryde <user42@zip.com.au>

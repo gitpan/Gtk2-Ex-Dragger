@@ -17,6 +17,9 @@ with Gtk2-Ex-Dragger.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
+Version 10, June 2011
+    - tests at least one .t to make smoke testing happy
+
 Version 9, May 2011
     - no value-changed/notify signals when unchanged at limit of adjustment
 

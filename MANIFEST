@@ -26,8 +26,10 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 README
 SIGNATURE
+t/Dragger-load.t
 t/Dragger.t
 t/MyTestHelpers.pm
+xt/0-examples-xrefs.t
 xt/0-META-read.t
 xt/0-no-debug-left-on.t
 xt/0-Test-ConsistentVersion.t

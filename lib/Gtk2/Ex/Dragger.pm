@@ -32,7 +32,7 @@ use Gtk2::Ex::WidgetEvents;
 # uncomment this to run the ### lines
 #use Smart::Comments;
 
-our $VERSION = 9;
+our $VERSION = 10;
 
 use constant DELAY_MILLISECONDS => 250;
 
@@ -925,13 +925,16 @@ feedback at the limits.
 The "cursor" option changes the mouse pointer cursor while dragging.  This
 is good if it's not clear for a given widget which button press etc
 activates a drag.  The cursor is set through WidgetCursor (see
-L<Gtk2::Ex::WidgetCursor>) and so cooperates with other uses of that (like
-its global "busy" indication).
+L<Gtk2::Ex::WidgetCursor>) and so cooperates with other uses of that.  See
+F<examples/heart.pl> in the Gtk2-Ex-Dragger sources, or F<examples/busy.pl>
+for the global "busy" indication.
 
 Dragger can work on both natively scrollable widgets and widgets put into a
 C<Gtk2::Viewport>.  For a viewport it's the viewport widget which is passed
 to the dragger since that's the widget showing a portion of a larger
-underlying thing.
+underlying thing.  (Eg. F<examples/textview.pl> natively or
+F<examples/label.pl> and F<examples/layout.pl> in a Viewport or Layout, and
+F<examples/vruler.pl> with separately jigged up adjusters.)
 
 Changes to the adjustment value, upper/lower, page size, or the widget
 window size are all allowed during a drag.  A change to the value could come
@@ -1181,6 +1184,26 @@ starting the drag, if not already on, using an active grab and a
 C<< $display->get_pointer >> to check for any missed movement.  But for now
 that doesn't seem worthwhile, not while the release mask can't be similarly
 adapted.
+
+=head1 BUILDABLE
+
+C<Gtk2::Ex::Dragger> can be built in a C<Gtk2::Builder> spec the same as any
+other C<Glib::Object>.  The class name is "Gtk2__Ex__Dragger" as usual for
+Perl-Gtk package name to class name conversion.  The target C<widget>,
+C<hadjustment> and C<vadjustment> properties can be set to objects created
+in the spec, for example
+
+  <object class="Gtk2__Ex__Dragger" id="dragger">
+    <property name="widget">viewport</property>
+    <property name="hadjustment">hadjustment</property>
+    <property name="vadjustment">vadjustment</property>
+  </object>
+
+See F<examples/builder.pl> in the Gtk2-Ex-Dragger sources for a complete
+program.  Or F<examples/builder-internal.pl> shows how to connect up to
+adjustment objects offered as "internal children" of a widget (which is a
+handy way to expose what a widget creates, though no Gtk core widgets do
+it).
 
 =head1 SEE ALSO
 
